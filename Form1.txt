@@ -14,10 +14,5 @@
             get => textBoxQuantity.Text; // 値を取得
             set => textBoxQuantity.Text = value; // 値を設定
         }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
