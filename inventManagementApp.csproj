@@ -8,12 +8,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\.editorconfig" />
-  </ItemGroup>
-
 </Project>
