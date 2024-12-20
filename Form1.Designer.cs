@@ -49,23 +49,23 @@ namespace inventManagementApp
             // labelQuantity
             // 
             labelQuantity.AutoSize = true;
+            labelQuantity.BackColor = Color.Transparent;
             labelQuantity.Font = new Font("Yu Gothic UI", 20F);
             labelQuantity.Location = new Point(12, 107);
             labelQuantity.Name = "labelQuantity";
             labelQuantity.Size = new Size(103, 54);
             labelQuantity.TabIndex = 0;
             labelQuantity.Text = "数量";
-            labelQuantity.BackColor = Color.Transparent;
             // 
             // textBoxQuantity
             // 
+            textBoxQuantity.BackColor = SystemColors.Control;
             textBoxQuantity.Font = new Font("Yu Gothic UI", 20F);
             textBoxQuantity.Location = new Point(121, 104);
             textBoxQuantity.Name = "textBoxQuantity";
             textBoxQuantity.Size = new Size(103, 61);
             textBoxQuantity.TabIndex = 1;
             textBoxQuantity.Text = "0";
-            textBoxQuantity.BackColor = this.BackColor;
             // 
             // addButton
             // 
@@ -87,25 +87,25 @@ namespace inventManagementApp
             // 
             // commentbox
             // 
+            commentbox.BackColor = SystemColors.Control;
             commentbox.Font = new Font("Yu Gothic UI", 13F);
             commentbox.Location = new Point(174, 183);
             commentbox.Name = "commentbox";
             commentbox.Size = new Size(146, 42);
             commentbox.TabIndex = 4;
             commentbox.Text = "コメント";
-            commentbox.BackColor = this.BackColor;
             // 
             // time
             // 
             time.AutoSize = true;
+            time.BackColor = Color.Transparent;
             time.Font = new Font("Yu Gothic UI", 13F);
             time.Location = new Point(40, 183);
             time.Name = "time";
             time.Size = new Size(119, 36);
             time.TabIndex = 5;
             time.Text = "現在時刻";
-            time.Click += label1_Click;
-            time.BackColor = Color.Transparent;
+            time.Click += this.label1_Click;
             // 
             // createbutton
             // 
