@@ -118,7 +118,7 @@ namespace inventManagementApp
         //private int mainQuantity;
         private const int maxQuantity = 9999;
         private const int minQuantity = 0;
-        private int checkedQuantity;
+        //private int checkedQuantity;
 
         private Label label1;
         private TextBox textBox1;
