@@ -5,12 +5,19 @@ namespace inventManagementApp
         public Form1()
         {
             InitializeComponent(); //フォームの初期化
-            textBox1.KeyDown += TextBox1_KeyDown; // テキストボックスの値の取得、範囲処理、書き換え
+            textBoxQuantity.KeyDown += TextBox1_KeyDown; // テキストボックスの値の取得、範囲処理、書き換え
+            addButton.Click += addButton_Click; // +ボタンのクリック処理
+            decreaseButton.Click += decreaseButton_Click; // -ボタンのクリック処理
         }
         public string TextBoxValue
         {
-            get => textBox1.Text; // 値を取得
-            set => textBox1.Text = value; // 値を設定
+            get => textBoxQuantity.Text; // 値を取得
+            set => textBoxQuantity.Text = value; // 値を設定
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

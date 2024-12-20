@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace inventManagementApp
 {
@@ -35,56 +36,132 @@ namespace inventManagementApp
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            textBox1 = new TextBox();
+            labelQuantity = new Label();
+            textBoxQuantity = new TextBox();
+            addButton = new Button();
+            decreaseButton = new Button();
+            commentbox = new TextBox();
+            time = new Label();
+            createbutton = new Button();
+            title = new Label();
             SuspendLayout();
             // 
-            // label1
+            // labelQuantity
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Yu Gothic UI", 20F);
-            label1.Location = new Point(76, 39);
-            label1.Name = "label1";
-            label1.Size = new Size(103, 54);
-            label1.TabIndex = 0;
-            label1.Text = "数量";
+            labelQuantity.AutoSize = true;
+            labelQuantity.Font = new Font("Yu Gothic UI", 20F);
+            labelQuantity.Location = new Point(12, 107);
+            labelQuantity.Name = "labelQuantity";
+            labelQuantity.Size = new Size(103, 54);
+            labelQuantity.TabIndex = 0;
+            labelQuantity.Text = "数量";
+            labelQuantity.BackColor = Color.Transparent;
             // 
-            // textBox1
+            // textBoxQuantity
             // 
-            textBox1.Font = new Font("Yu Gothic UI", 20F);
-            textBox1.Location = new Point(174, 36);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(103, 61);
-            textBox1.TabIndex = 1;
-            textBox1.Text = "0";
+            textBoxQuantity.Font = new Font("Yu Gothic UI", 20F);
+            textBoxQuantity.Location = new Point(121, 104);
+            textBoxQuantity.Name = "textBoxQuantity";
+            textBoxQuantity.Size = new Size(103, 61);
+            textBoxQuantity.TabIndex = 1;
+            textBoxQuantity.Text = "0";
+            textBoxQuantity.BackColor = this.BackColor;
+            // 
+            // addButton
+            // 
+            addButton.Location = new Point(246, 104);
+            addButton.Name = "addButton";
+            addButton.Size = new Size(112, 61);
+            addButton.TabIndex = 2;
+            addButton.Text = "+";
+            addButton.UseVisualStyleBackColor = true;
+            // 
+            // decreaseButton
+            // 
+            decreaseButton.Location = new Point(364, 104);
+            decreaseButton.Name = "decreaseButton";
+            decreaseButton.Size = new Size(112, 61);
+            decreaseButton.TabIndex = 3;
+            decreaseButton.Text = "-";
+            decreaseButton.UseVisualStyleBackColor = true;
+            // 
+            // commentbox
+            // 
+            commentbox.Font = new Font("Yu Gothic UI", 13F);
+            commentbox.Location = new Point(174, 183);
+            commentbox.Name = "commentbox";
+            commentbox.Size = new Size(146, 42);
+            commentbox.TabIndex = 4;
+            commentbox.Text = "コメント";
+            commentbox.BackColor = this.BackColor;
+            // 
+            // time
+            // 
+            time.AutoSize = true;
+            time.Font = new Font("Yu Gothic UI", 13F);
+            time.Location = new Point(40, 183);
+            time.Name = "time";
+            time.Size = new Size(119, 36);
+            time.TabIndex = 5;
+            time.Text = "現在時刻";
+            time.Click += label1_Click;
+            time.BackColor = Color.Transparent;
+            // 
+            // createbutton
+            // 
+            createbutton.Location = new Point(340, 183);
+            createbutton.Name = "createbutton";
+            createbutton.Size = new Size(112, 42);
+            createbutton.TabIndex = 6;
+            createbutton.Text = "追加";
+            createbutton.UseVisualStyleBackColor = true;
+            // 
+            // title
+            // 
+            title.AutoSize = true;
+            title.BackColor = Color.Transparent;
+            title.Font = new Font("Yu Gothic UI", 14F);
+            title.ForeColor = Color.White;
+            title.Location = new Point(12, 54);
+            title.Name = "title";
+            title.Size = new Size(133, 38);
+            title.TabIndex = 7;
+            title.Text = "freemake";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(817, 450);
-            Controls.Add(textBox1);
-            Controls.Add(label1);
+            ClientSize = new Size(494, 450);
+            Controls.Add(title);
+            Controls.Add(createbutton);
+            Controls.Add(time);
+            Controls.Add(commentbox);
+            Controls.Add(decreaseButton);
+            Controls.Add(addButton);
+            Controls.Add(textBoxQuantity);
+            Controls.Add(labelQuantity);
             Name = "Form1";
             Text = "mainForm";
+            Paint += MainForm_Paint;
             ResumeLayout(false);
             PerformLayout();
         }
 
         private void textboxCheck()
         {
-            if (int.TryParse(textBox1.Text, out int inputQuantity))
+            if (int.TryParse(textBoxQuantity.Text.Replace(",", ""), out int inputQuantity))
             {
                 int checkedQuantity = CheckQuantityRange(inputQuantity);
 
                 // チェック後の値をテキストボックスに反映
-                textBox1.Text = checkedQuantity.ToString();
+                textBoxQuantity.Text = checkedQuantity.ToString("N0");
             }
             else
             {
                 // 無効な入力の場合のエラー表示
                 MessageBox.Show("有効な数値を入力してください(0~9999)");
-                textBox1.Text = minQuantity.ToString(); // 最小値を設定
+                textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
             }
         }
         public int CheckQuantityRange(int argindex)
@@ -114,14 +191,64 @@ namespace inventManagementApp
                 e.SuppressKeyPress = true;
             }
         }
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+
+            if (int.TryParse(textBoxQuantity.Text.Replace(",", ""), out int inputQuantity))
+            {
+                int checkedQuantity = CheckQuantityRange(inputQuantity + 1);
+                // チェック後の値をテキストボックスに反映
+                textBoxQuantity.Text = checkedQuantity.ToString("N0");
+            }
+            else
+            {
+                // 無効な入力の場合のエラー表示
+                MessageBox.Show("有効な数値を入力してください(0~9999)");
+                textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
+            }
+        }
+        private void decreaseButton_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(textBoxQuantity.Text.Replace(",", ""), out int inputQuantity))
+            {
+                int checkedQuantity = CheckQuantityRange(inputQuantity - 1);
+                // チェック後の値をテキストボックスに反映
+                textBoxQuantity.Text = checkedQuantity.ToString("N0");
+            }
+            else
+            {
+                // 無効な入力の場合のエラー表示
+                //MessageBox.Show("有効な数値を入力してください(0~9999)");
+                MessageBox.Show("debug");
+                textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
+            }
+        }
+
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+
+            // ウィンドウの幅を取得
+            int width = this.ClientSize.Width;
+
+            // 背景色（固定高さ）
+            g.FillRectangle(Brushes.LightBlue, 0, 0, width, FixedHeight);
+        }
+
         #endregion
-        //private int mainQuantity;
         private const int maxQuantity = 9999;
         private const int minQuantity = 0;
-        //private int checkedQuantity;
+        private const int FixedHeight = 100;
 
-        private Label label1;
-        private TextBox textBox1;
+        private Label labelQuantity;
+        private TextBox textBoxQuantity;
+        private Button addButton;
+        private Button decreaseButton;
+        private TextBox commentbox;
+        private Label time;
+        private Button createbutton;
+        private Label title;
     }
 }
 
