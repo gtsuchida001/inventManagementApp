@@ -105,7 +105,12 @@ namespace inventManagementApp
             time.Size = new Size(119, 36);
             time.TabIndex = 5;
             time.Text = "現在時刻";
-            time.Click += this.label1_Click;
+            timer = new System.Windows.Forms.Timer
+            {
+                Interval = 1000 // 1秒ごとに更新
+            };
+            timer.Tick += Timer_Tick;
+            timer.Start();
             // 
             // createbutton
             // 
@@ -235,11 +240,18 @@ namespace inventManagementApp
             // 背景色（固定高さ）
             g.FillRectangle(Brushes.LightBlue, 0, 0, width, FixedHeight);
         }
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            // 現在時刻を取得して表示
+            time.Text = DateTime.Now.ToString("HH:mm:ss");
+        }
+
 
         #endregion
         private const int maxQuantity = 9999;
         private const int minQuantity = 0;
         private const int FixedHeight = 100;
+        private System.Windows.Forms.Timer timer;
 
         private Label labelQuantity;
         private TextBox textBoxQuantity;
