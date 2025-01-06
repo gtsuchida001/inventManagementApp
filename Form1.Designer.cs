@@ -276,7 +276,7 @@ namespace inventManagementApp
                 string commentText = string.IsNullOrWhiteSpace(commentbox.Text) ? "blank comment" : commentbox.Text;
 
                 // 新しいリストアイテムを作成
-                var newItem = new ListItemControl(commentbox.Text);
+                var newItem = new ListItemControl(textBoxQuantity.Text,commentbox.Text);
 
                 // 削除イベントの設定
                 newItem.DeleteClicked += (s, args) =>
@@ -288,6 +288,7 @@ namespace inventManagementApp
                     // スクロール領域を更新
                     AdjustTableLayoutSize();
                 };
+
 
                 // TableLayoutPanel に追加
                 tableLayoutPanel.RowCount++; //色用のカウント
@@ -380,46 +381,95 @@ namespace inventManagementApp
         public class ListItemControl : UserControl
         {
             private CheckBox checkBox;
-            private Label label;
+            private Label timelabel;
+            private Label Quantitylabel;
+            private Label commentlabel;
             private Button deleteButton;
 
             public event EventHandler DeleteClicked; // 削除ボタンが押されたときのイベント
 
-            public ListItemControl(string text)
+            public ListItemControl(string Quantitytext, string commentText)
             {
                 // コントロールの初期化
                 this.Width = 400; // 幅を固定（必要に応じて変更）
                 this.Height = 40; // 高さを固定
                 //this.Margin = new Padding(5); // 間隔
                 this.BackColor = Color.White;
-                //コメントボックスの取得
-                
+
+                FlowLayoutPanel layoutPanel = new FlowLayoutPanel
+                {
+                    FlowDirection = FlowDirection.LeftToRight, // **横方向に並べる**
+                    Dock = DockStyle.Fill,
+                    AutoSize = false,
+                    Width = this.Width,
+                    Height = this.Height,
+                    WrapContents = false,
+                    BackColor = Color.Transparent
+                };
 
                 checkBox = new CheckBox
                 {
-                    Dock = DockStyle.Left,
                     Width = 20,
+                    Height = 30,
+                    Margin = new Padding(5, 5, 5, 5)
                 };
 
-                label = new Label
+                timelabel = new Label
                 {
-                    Text = text,
-                    Dock = DockStyle.Fill,
-                    TextAlign = ContentAlignment.MiddleLeft
+                    Text = DateTime.Now.ToString("HH:mm:ss"),
+                    AutoSize = true,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Width = 30, // **時間の幅を固定**
+                    Height = 30
+                };
+
+                Quantitylabel = new Label
+                {
+                    Text = Quantitytext,
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Width = 60, // **数量の幅を固定**
+                    Height = 30
+                };
+
+                commentlabel = new Label
+                {
+                    Text = commentText,
+                    AutoSize = false,
+                    Width = 100, // **コメントの幅を固定**
+                    Height = 30,
                 };
 
                 deleteButton = new Button
                 {
                     Text = "削除",
-                    Dock = DockStyle.Right,
                     Width = 60,
+                    Height = 30
                 };
-
                 deleteButton.Click += (s, e) => DeleteClicked?.Invoke(this, EventArgs.Empty);
+                checkBox.CheckedChanged += CheckBox_CheckedChanged;
 
-                this.Controls.Add(deleteButton);
-                this.Controls.Add(label);
-                this.Controls.Add(checkBox);
+                // FlowLayoutPanel に追加**
+                layoutPanel.Controls.Add(checkBox);
+                layoutPanel.Controls.Add(timelabel);
+                layoutPanel.Controls.Add(Quantitylabel);
+                layoutPanel.Controls.Add(commentlabel);
+                layoutPanel.Controls.Add(deleteButton);
+
+                // この UserControl に FlowLayoutPanel を追加**
+                this.Controls.Add(layoutPanel);
+            }
+
+            private void CheckBox_CheckedChanged(object sender, EventArgs e)
+            {
+                if (checkBox.Checked)
+                {
+                    this.BackColor = Color.LightGreen; // チェック時は緑
+                }
+                else
+                {
+                    this.BackColor = Color.White; // 未チェック時は白に戻す
+                }
             }
         }
         
