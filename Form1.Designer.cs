@@ -308,6 +308,19 @@ namespace inventManagementApp
         public void createbutton_Click(object sender, EventArgs e)
         {
             {
+                if (int.TryParse(textBoxQuantity.Text.Replace(",", ""), out int inputQuantity))
+                {
+                    int checkedQuantity = CheckQuantityRange(inputQuantity);
+                    // チェック後の値をテキストボックスに反映
+                    textBoxQuantity.Text = checkedQuantity.ToString("N0");
+                }
+                else
+                {
+                    // 無効な入力の場合のエラー表示
+                    MessageBox.Show("有効な数値を入力してください(0~9999)");
+                    textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
+                }
+
                 // **空欄の場合の処理**
                 string commentText = string.IsNullOrWhiteSpace(commentbox.Text) ? "blank comment" : commentbox.Text;
                 int rowIndex = tableLayoutPanel.RowCount;
