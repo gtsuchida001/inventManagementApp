@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace inventManagementApp
 {
@@ -36,14 +37,19 @@ namespace inventManagementApp
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             labelQuantity = new Label();
             textBoxQuantity = new TextBox();
             addButton = new Button();
             decreaseButton = new Button();
             commentbox = new TextBox();
             time = new Label();
-            createbutton = new Button();
             title = new Label();
+            timer = new System.Windows.Forms.Timer(components);
+            createButton = new Button();
+            tableLayoutPanel = new TableLayoutPanel();
+            panelcontain = new Panel();
+            panelcontain.SuspendLayout();
             SuspendLayout();
             // 
             // labelQuantity
@@ -105,21 +111,6 @@ namespace inventManagementApp
             time.Size = new Size(119, 36);
             time.TabIndex = 5;
             time.Text = "現在時刻";
-            timer = new System.Windows.Forms.Timer
-            {
-                Interval = 1000 // 1秒ごとに更新
-            };
-            timer.Tick += Timer_Tick;
-            timer.Start();
-            // 
-            // createbutton
-            // 
-            createbutton.Location = new Point(340, 183);
-            createbutton.Name = "createbutton";
-            createbutton.Size = new Size(112, 42);
-            createbutton.TabIndex = 6;
-            createbutton.Text = "追加";
-            createbutton.UseVisualStyleBackColor = true;
             // 
             // title
             // 
@@ -133,22 +124,57 @@ namespace inventManagementApp
             title.TabIndex = 7;
             title.Text = "freemake";
             // 
+            // timer
+            // 
+            timer.Enabled = true;
+            timer.Tick += Timer_Tick;
+            // 
+            // createButton
+            // 
+            createButton.Location = new Point(340, 183);
+            createButton.Name = "createButton";
+            createButton.Size = new Size(112, 42);
+            createButton.TabIndex = 9;
+            createButton.Text = "追加";
+            createButton.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel
+            // 
+            tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel.ColumnCount = 1;
+            tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100.000008F));
+            tableLayoutPanel.Location = new Point(14, 12);
+            tableLayoutPanel.Name = "tableLayoutPanel";
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            tableLayoutPanel.Size = new Size(407, 273);
+            tableLayoutPanel.TabIndex = 8;
+            // 
+            // panelcontain
+            // 
+            panelcontain.Controls.Add(tableLayoutPanel);
+            panelcontain.Location = new Point(26, 240);
+            panelcontain.Name = "panelcontain";
+            panelcontain.Size = new Size(450, 300);
+            panelcontain.TabIndex = 10;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(494, 450);
+            ClientSize = new Size(500, 569);
+            Controls.Add(createButton);
             Controls.Add(title);
-            Controls.Add(createbutton);
             Controls.Add(time);
             Controls.Add(commentbox);
             Controls.Add(decreaseButton);
             Controls.Add(addButton);
             Controls.Add(textBoxQuantity);
             Controls.Add(labelQuantity);
+            Controls.Add(panelcontain);
             Name = "Form1";
             Text = "mainForm";
             Paint += MainForm_Paint;
+            panelcontain.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -171,8 +197,6 @@ namespace inventManagementApp
         }
         public int CheckQuantityRange(int argindex)
         {
-            
-
             if (argindex <= minQuantity)
             {
                 return minQuantity;
@@ -183,7 +207,7 @@ namespace inventManagementApp
             }
             else
             {
-            return argindex;
+                return argindex;
             }
         }
         private void TextBox1_KeyDown(object sender, KeyEventArgs e)
@@ -229,13 +253,13 @@ namespace inventManagementApp
                 textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
             }
         }
-
         private void MainForm_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
             // ウィンドウの幅を取得
             int width = this.ClientSize.Width;
+
 
             // 背景色（固定高さ）
             g.FillRectangle(Brushes.LightBlue, 0, 0, width, FixedHeight);
@@ -245,7 +269,210 @@ namespace inventManagementApp
             // 現在時刻を取得して表示
             time.Text = DateTime.Now.ToString("HH:mm:ss");
         }
+        public void createbutton_Click(object sender, EventArgs e)
+        {
+            {
+                // **空欄の場合の処理**
+                string commentText = string.IsNullOrWhiteSpace(commentbox.Text) ? "blank comment" : commentbox.Text;
 
+                // 新しいリストアイテムを作成
+                var newItem = new ListItemControl(textBoxQuantity.Text,commentbox.Text);
+
+                // 削除イベントの設定
+                newItem.DeleteClicked += (s, args) =>
+                {
+                    tableLayoutPanel.Controls.Remove((Control)s);
+                    tableLayoutPanel.RowCount--;
+                    // **すべてのアイテムを上に詰める**
+                    RearrangeTableLayoutPanel();
+                    // スクロール領域を更新
+                    AdjustTableLayoutSize();
+                };
+
+
+                // TableLayoutPanel に追加
+                tableLayoutPanel.RowCount++; //色用のカウント
+                tableLayoutPanel.Controls.Add(newItem, 0, tableLayoutPanel.RowCount - 1);
+                tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F)); // 行の高さを40に設定
+
+                //色を設定
+                newItem.BackColor = GetColor();
+
+                // レイアウトを更新
+                tableLayoutPanel.PerformLayout();
+                tableLayoutPanel.Invalidate();
+
+                //パネルサイズの更新
+                AdjustTableLayoutSize();
+
+                // 最下部にスクロール
+                panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
+            }
+        }
+        private Color GetColor()
+        {
+            if (tableLayoutPanel.RowCount % 2 == 0)
+            {
+                return Color.LightGray;
+            }
+            else
+            {
+                return Color.White;
+            }
+        }
+        private void AdjustTableLayoutSize() //パネルサイズ拡張
+        {
+            if (tableLayoutPanel == null || panelcontain == null)
+            {
+                MessageBox.Show("tableLayoutPanel または panelContainer が見つかりません。");
+                return;
+            }
+
+            // `TableLayoutPanel` の高さを行数に合わせて調整
+            tableLayoutPanel.Height = tableLayoutPanel.RowCount * 40 + 10;
+
+            // `panelContainer` のスクロールを維持
+            panelcontain.AutoScroll = true;
+
+            // スクロール位置を最上部に戻す
+            // スクロール領域を適切に設定（TableLayoutPanelの高さ分）
+            panelcontain.AutoScrollMinSize = new Size(0, tableLayoutPanel.Height);
+
+            // レイアウトの更新
+            panelcontain.PerformLayout();
+            panelcontain.Update();
+
+            panelcontain.Invalidate();
+
+            // **スクロールバーのハンドル位置を更新**
+            panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
+        }
+        private void RearrangeTableLayoutPanel()
+        {
+            if (tableLayoutPanel == null)
+            {
+                return;
+            }
+
+            // 既存のアイテムをリストに保存
+            List<Control> controls = new List<Control>();
+            foreach (Control control in tableLayoutPanel.Controls)
+            {
+                controls.Add(control);
+            }
+
+            // すべてのアイテムを一度削除
+            tableLayoutPanel.Controls.Clear();
+
+            // 行数をリセット
+            tableLayoutPanel.RowCount = 0;
+
+            // すべてのアイテムを再配置
+            foreach (Control control in controls)
+            {
+                tableLayoutPanel.RowCount++;
+                tableLayoutPanel.Controls.Add(control, 0, tableLayoutPanel.RowCount - 1);
+            }
+
+            // スクロールバーを更新
+            AdjustTableLayoutSize();
+        }
+
+        public class ListItemControl : UserControl
+        {
+            private CheckBox checkBox;
+            private Label timelabel;
+            private Label Quantitylabel;
+            private Label commentlabel;
+            private Button deleteButton;
+
+            public event EventHandler DeleteClicked; // 削除ボタンが押されたときのイベント
+
+            public ListItemControl(string Quantitytext, string commentText)
+            {
+                // コントロールの初期化
+                this.Width = 400; // 幅を固定（必要に応じて変更）
+                this.Height = 40; // 高さを固定
+                //this.Margin = new Padding(5); // 間隔
+                this.BackColor = Color.White;
+
+                FlowLayoutPanel layoutPanel = new FlowLayoutPanel
+                {
+                    FlowDirection = FlowDirection.LeftToRight, // **横方向に並べる**
+                    Dock = DockStyle.Fill,
+                    AutoSize = false,
+                    Width = this.Width,
+                    Height = this.Height,
+                    WrapContents = false,
+                    BackColor = Color.Transparent
+                };
+
+                checkBox = new CheckBox
+                {
+                    Width = 20,
+                    Height = 30,
+                    Margin = new Padding(5, 5, 5, 5)
+                };
+
+                timelabel = new Label
+                {
+                    Text = DateTime.Now.ToString("HH:mm:ss"),
+                    AutoSize = true,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Width = 30, // **時間の幅を固定**
+                    Height = 30
+                };
+
+                Quantitylabel = new Label
+                {
+                    Text = Quantitytext,
+                    AutoSize = false,
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    Width = 60, // **数量の幅を固定**
+                    Height = 30
+                };
+
+                commentlabel = new Label
+                {
+                    Text = commentText,
+                    AutoSize = false,
+                    Width = 100, // **コメントの幅を固定**
+                    Height = 30,
+                };
+
+                deleteButton = new Button
+                {
+                    Text = "削除",
+                    Width = 60,
+                    Height = 30
+                };
+                deleteButton.Click += (s, e) => DeleteClicked?.Invoke(this, EventArgs.Empty);
+                checkBox.CheckedChanged += CheckBox_CheckedChanged;
+
+                // FlowLayoutPanel に追加**
+                layoutPanel.Controls.Add(checkBox);
+                layoutPanel.Controls.Add(timelabel);
+                layoutPanel.Controls.Add(Quantitylabel);
+                layoutPanel.Controls.Add(commentlabel);
+                layoutPanel.Controls.Add(deleteButton);
+
+                // この UserControl に FlowLayoutPanel を追加**
+                this.Controls.Add(layoutPanel);
+            }
+
+            private void CheckBox_CheckedChanged(object sender, EventArgs e)
+            {
+                if (checkBox.Checked)
+                {
+                    this.BackColor = Color.LightGreen; // チェック時は緑
+                }
+                else
+                {
+                    this.BackColor = Color.White; // 未チェック時は白に戻す
+                }
+            }
+        }
+        
 
         #endregion
         private const int maxQuantity = 9999;
@@ -259,8 +486,11 @@ namespace inventManagementApp
         private Button decreaseButton;
         private TextBox commentbox;
         private Label time;
-        private Button createbutton;
         private Label title;
+        private Button createButton;
+        private TableLayoutPanel tableLayoutPanel;
+        private Panel panelcontain;
     }
 }
+
 
