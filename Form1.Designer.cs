@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Globalization;
 
 namespace inventManagementApp
 {
@@ -49,6 +50,9 @@ namespace inventManagementApp
             createButton = new Button();
             tableLayoutPanel = new TableLayoutPanel();
             panelcontain = new Panel();
+            clearbutton = new Button();
+            combinedbutton = new Button();
+            combinedquantitylabel = new Label();
             panelcontain.SuspendLayout();
             SuspendLayout();
             // 
@@ -146,7 +150,7 @@ namespace inventManagementApp
             tableLayoutPanel.Location = new Point(14, 12);
             tableLayoutPanel.Name = "tableLayoutPanel";
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel.Size = new Size(407, 273);
+            tableLayoutPanel.Size = new Size(407, 241);
             tableLayoutPanel.TabIndex = 8;
             // 
             // panelcontain
@@ -154,14 +158,46 @@ namespace inventManagementApp
             panelcontain.Controls.Add(tableLayoutPanel);
             panelcontain.Location = new Point(26, 240);
             panelcontain.Name = "panelcontain";
-            panelcontain.Size = new Size(450, 300);
+            panelcontain.Size = new Size(450, 267);
             panelcontain.TabIndex = 10;
+            // 
+            // clearbutton
+            // 
+            clearbutton.Location = new Point(40, 513);
+            clearbutton.Name = "clearbutton";
+            clearbutton.Size = new Size(140, 44);
+            clearbutton.TabIndex = 11;
+            clearbutton.Text = "クリア";
+            clearbutton.UseVisualStyleBackColor = true;
+            clearbutton.Click += clearbutton_Click;
+            // 
+            // combinedbutton
+            // 
+            combinedbutton.Location = new Point(197, 515);
+            combinedbutton.Name = "combinedbutton";
+            combinedbutton.Size = new Size(255, 42);
+            combinedbutton.TabIndex = 12;
+            combinedbutton.Text = "選択された合計数量";
+            combinedbutton.UseVisualStyleBackColor = true;
+            combinedbutton.Click += combinedbutton_Click;
+            // 
+            // combinedquantitylabel
+            // 
+            combinedquantitylabel.Font = new Font("Yu Gothic UI", 13F);
+            combinedquantitylabel.Location = new Point(246, 560);
+            combinedquantitylabel.Name = "combinedquantitylabel";
+            combinedquantitylabel.Size = new Size(206, 37);
+            combinedquantitylabel.TabIndex = 13;
+            combinedquantitylabel.Text = "合計数：";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(500, 569);
+            ClientSize = new Size(500, 606);
+            Controls.Add(combinedquantitylabel);
+            Controls.Add(combinedbutton);
+            Controls.Add(clearbutton);
             Controls.Add(createButton);
             Controls.Add(title);
             Controls.Add(time);
@@ -274,9 +310,10 @@ namespace inventManagementApp
             {
                 // **空欄の場合の処理**
                 string commentText = string.IsNullOrWhiteSpace(commentbox.Text) ? "blank comment" : commentbox.Text;
+                int rowIndex = tableLayoutPanel.RowCount;
 
                 // 新しいリストアイテムを作成
-                var newItem = new ListItemControl(textBoxQuantity.Text,commentbox.Text);
+                var newItem = new ListItemControl(textBoxQuantity.Text,commentbox.Text, rowIndex);
 
                 // 削除イベントの設定
                 newItem.DeleteClicked += (s, args) =>
@@ -309,7 +346,7 @@ namespace inventManagementApp
                 panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
             }
         }
-        private Color GetColor()
+        public Color GetColor()
         {
             if (tableLayoutPanel.RowCount % 2 == 0)
             {
@@ -378,6 +415,43 @@ namespace inventManagementApp
             AdjustTableLayoutSize();
         }
 
+        private void clearbutton_Click(object sender, EventArgs e)
+        {
+            // すべてのコントロールを削除
+            tableLayoutPanel.Controls.Clear();
+
+            // 行数をリセット
+            tableLayoutPanel.RowCount = 0;
+
+            // レイアウトを更新
+            tableLayoutPanel.PerformLayout();
+
+            // スクロール領域をリセット
+            AdjustTableLayoutSize();
+        }
+
+        private void combinedbutton_Click(object sender, EventArgs e)
+        {
+            int total = 0;
+
+            foreach (Control control in tableLayoutPanel.Controls)
+            {
+                if (control is ListItemControl item)
+                {
+                    // チェックが付いている場合
+                    if (item.IsChecked)
+                    {
+                        // 数量を取得して加算
+                        if (int.TryParse(item.QuantityText, NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out int quantity))
+                        {
+                            total += quantity;
+                        }
+                    }
+                }
+            }
+            combinedquantitylabel.Text = $"合計数：{total}";
+        }
+
         public class ListItemControl : UserControl
         {
             private CheckBox checkBox;
@@ -385,16 +459,18 @@ namespace inventManagementApp
             private Label Quantitylabel;
             private Label commentlabel;
             private Button deleteButton;
+            private int rowIndex;
 
             public event EventHandler DeleteClicked; // 削除ボタンが押されたときのイベント
 
-            public ListItemControl(string Quantitytext, string commentText)
+            public ListItemControl(string Quantitytext, string commentText, int rowIndex)
             {
                 // コントロールの初期化
                 this.Width = 400; // 幅を固定（必要に応じて変更）
                 this.Height = 40; // 高さを固定
                 //this.Margin = new Padding(5); // 間隔
                 this.BackColor = Color.White;
+                this.rowIndex = rowIndex;
 
                 FlowLayoutPanel layoutPanel = new FlowLayoutPanel
                 {
@@ -468,9 +544,22 @@ namespace inventManagementApp
                 }
                 else
                 {
-                    this.BackColor = Color.White; // 未チェック時は白に戻す
+                    if (rowIndex % 2 == 0) //生成時の参照からずらす
+                    {
+                        this.BackColor = Color.White;
+                    }
+                    else
+                    {
+                        this.BackColor = Color.LightGray;
+                    }
                 }
             }
+            
+            // **プロパティ: チェックされているか**
+            public bool IsChecked => checkBox.Checked;
+
+            // **プロパティ: 数量のテキスト**
+            public string QuantityText => Quantitylabel.Text;
         }
         
 
@@ -490,6 +579,9 @@ namespace inventManagementApp
         private Button createButton;
         private TableLayoutPanel tableLayoutPanel;
         private Panel panelcontain;
+        private Button clearbutton;
+        private Button combinedbutton;
+        private Label combinedquantitylabel;
     }
 }
 

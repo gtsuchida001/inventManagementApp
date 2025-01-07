@@ -9,6 +9,8 @@ namespace inventManagementApp
             addButton.Click += addButton_Click; // +ボタンのクリック処理
             decreaseButton.Click += decreaseButton_Click; // -ボタンのクリック処理
             createButton.Click += createbutton_Click; // 追加ボタンのクリック処理
+            clearbutton.Click += clearbutton_Click; // クリアボタンのクリック処理
+            combinedbutton.Click += combinedbutton_Click; // 合算ボタンのクリック処理
 
 
             // **サンプルデータ
@@ -27,5 +29,7 @@ namespace inventManagementApp
             get => textBoxQuantity.Text; // 値を取得
             set => textBoxQuantity.Text = value; // 値を設定
         }
+
+        
     }
 }
