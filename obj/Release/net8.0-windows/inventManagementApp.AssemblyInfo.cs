@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("inventManagementApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d5accb4ec83275886be12e2ef41a692f6acd3ef2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c34aa66ea2c5f57fb432555e7caf9665534c29bd")]
 [assembly: System.Reflection.AssemblyProductAttribute("inventManagementApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("inventManagementApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

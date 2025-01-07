@@ -5,6 +5,7 @@ namespace inventManagementApp
         public Form1()
         {
             InitializeComponent(); //フォームの初期化
+            this.AutoScaleMode = AutoScaleMode.None;
             textBoxQuantity.KeyDown += TextBox1_KeyDown; // テキストボックスの値の取得、範囲処理、書き換え
             addButton.Click += addButton_Click; // +ボタンのクリック処理
             decreaseButton.Click += decreaseButton_Click; // -ボタンのクリック処理

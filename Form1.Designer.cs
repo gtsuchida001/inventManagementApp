@@ -284,8 +284,7 @@ namespace inventManagementApp
             else
             {
                 // 無効な入力の場合のエラー表示
-                //MessageBox.Show("有効な数値を入力してください(0~9999)");
-                MessageBox.Show("debug");
+                MessageBox.Show("有効な数値を入力してください(0~9999)");
                 textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
             }
         }
@@ -319,6 +318,7 @@ namespace inventManagementApp
                     // 無効な入力の場合のエラー表示
                     MessageBox.Show("有効な数値を入力してください(0~9999)");
                     textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
+                    return;
                 }
 
                 // **空欄の場合の処理**
@@ -462,7 +462,14 @@ namespace inventManagementApp
                     }
                 }
             }
-            combinedquantitylabel.Text = $"合計数：{total}";
+            if (total >= int.MinValue && total <= int.MaxValue)
+            {
+                combinedquantitylabel.Text = $"合計数：{total}";
+            }
+            else
+            {
+                MessageBox.Show("計算後の値は巨大すぎます");
+            }
         }
 
         public class ListItemControl : UserControl
