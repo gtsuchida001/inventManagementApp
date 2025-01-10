@@ -246,15 +246,39 @@ namespace inventManagementApp
                 return argindex;
             }
         }
-        private void TextBox1_KeyDown(object sender, KeyEventArgs e)
+        private void textBoxQuantity_KeyPress(object sender, KeyPressEventArgs e)
         {
-            // エンターキーが押された場合にチェックを実行
-            if (e.KeyCode == Keys.Enter)
+            int cursorPos = textBoxQuantity.SelectionStart; // **現在のカーソル位置を保存**
+            
+            // **数字とバックスペースのみ許可**
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
             {
-                textboxCheck();
-                e.Handled = true;         // 既定のエンターキー動作を無効化
-                e.SuppressKeyPress = true;
+                e.Handled = true;
+                return;
             }
+
+            // **最大桁数を超える入力を防ぐ**
+            string rawText = textBoxQuantity.Text.Replace(",", "");
+            if (char.IsDigit(e.KeyChar) && rawText.Length >= 4)
+            {
+                e.Handled = true; // **4桁以上は入力させない**
+            }
+            if (int.TryParse(textBoxQuantity.Text.Replace(",", ""), out int inputQuantity))
+            {
+                int checkedQuantity = CheckQuantityRange(inputQuantity + 1);
+                // チェック後の値をテキストボックスに反映
+                textBoxQuantity.Text = checkedQuantity.ToString("N0");
+            }
+            else
+            {
+                // 無効な入力の場合のエラー表示
+                MessageBox.Show("有効な数値を入力してください(0~9999)");
+                textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
+            }
+
+            textboxCheck(); // **キー入力後の処理**
+
+            textBoxQuantity.SelectionStart = cursorPos; // **カーソル位置を元に戻す**
         }
 
         private void addButton_Click(object sender, EventArgs e)
