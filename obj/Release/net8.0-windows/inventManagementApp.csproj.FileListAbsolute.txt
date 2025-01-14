@@ -1,0 +1,17 @@
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\bin\Release\net8.0-windows\inventManagementApp.exe
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\bin\Release\net8.0-windows\inventManagementApp.deps.json
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\bin\Release\net8.0-windows\inventManagementApp.runtimeconfig.json
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\bin\Release\net8.0-windows\inventManagementApp.dll
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\bin\Release\net8.0-windows\inventManagementApp.pdb
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.Form1.resources
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.csproj.GenerateResource.cache
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.AssemblyInfoInputs.cache
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.AssemblyInfo.cs
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.csproj.CoreCompileInputs.cache
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.sourcelink.json
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.dll
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\refint\inventManagementApp.dll
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.pdb
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\inventManagementApp.genruntimeconfig.cache
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Release\net8.0-windows\ref\inventManagementApp.dll
