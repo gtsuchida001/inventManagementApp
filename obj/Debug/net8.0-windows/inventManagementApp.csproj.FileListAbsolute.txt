@@ -15,3 +15,4 @@ C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Debug
 C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Debug\net8.0-windows\inventManagementApp.pdb
 C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Debug\net8.0-windows\inventManagementApp.genruntimeconfig.cache
 C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\obj\Debug\net8.0-windows\ref\inventManagementApp.dll
+C:\Users\tsuchida\source\repos\inventManagementApp\inventManagementApp\bin\Debug\net8.0-windows\inventManagementApp.dll.config
