@@ -6,9 +6,6 @@ namespace inventManagementApp
 
         public Form1()
         {
-<<<<<<< HEAD
-            InitializeComponent();
-=======
             InitializeComponent(); //フォームの初期化
             this.Shown += Form1_Shown;
 
@@ -132,7 +129,6 @@ namespace inventManagementApp
             {
                 MessageBox.Show("ログの出力に失敗しました: " + ex.Message);
             }
->>>>>>> stage
         }
     }
 }

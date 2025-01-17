@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "7olsytncOt4=",
+  "dgSpecHash": "29OqoPzN3G8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\tsuchida\\source\\repos\\inventManagementApp\\inventManagementApp\\inventManagementApp.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\tsuchida\\Documents\\inventManagementApp\\inventManagementApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\tsuchida\\.nuget\\packages\\stub.system.data.sqlite.core.netstandard\\1.0.119\\stub.system.data.sqlite.core.netstandard.1.0.119.nupkg.sha512",
+    "C:\\Users\\tsuchida\\.nuget\\packages\\system.data.sqlite.core\\1.0.119\\system.data.sqlite.core.1.0.119.nupkg.sha512"
+  ],
   "logs": []
 }

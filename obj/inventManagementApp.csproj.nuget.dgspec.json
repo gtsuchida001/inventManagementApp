@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tsuchida\\source\\repos\\inventManagementApp\\inventManagementApp\\inventManagementApp.csproj": {}
+    "C:\\Users\\tsuchida\\Documents\\inventManagementApp\\inventManagementApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tsuchida\\source\\repos\\inventManagementApp\\inventManagementApp\\inventManagementApp.csproj": {
+    "C:\\Users\\tsuchida\\Documents\\inventManagementApp\\inventManagementApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tsuchida\\source\\repos\\inventManagementApp\\inventManagementApp\\inventManagementApp.csproj",
+        "projectUniqueName": "C:\\Users\\tsuchida\\Documents\\inventManagementApp\\inventManagementApp.csproj",
         "projectName": "inventManagementApp",
-        "projectPath": "C:\\Users\\tsuchida\\source\\repos\\inventManagementApp\\inventManagementApp\\inventManagementApp.csproj",
+        "projectPath": "C:\\Users\\tsuchida\\Documents\\inventManagementApp\\inventManagementApp.csproj",
         "packagesPath": "C:\\Users\\tsuchida\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tsuchida\\source\\repos\\inventManagementApp\\inventManagementApp\\obj\\",
+        "outputPath": "C:\\Users\\tsuchida\\Documents\\inventManagementApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -49,6 +49,12 @@
       "frameworks": {
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "System.Data.SQLite.Core": {
+              "target": "Package",
+              "version": "[1.0.119, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -68,7 +74,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

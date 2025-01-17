@@ -1,0 +1,87 @@
+﻿using System.Windows.Forms;
+using inventManagementApp;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+
+//namespace inventManagementApp
+//{
+//    partial class Form2
+//    {
+//        /// <summary>
+//        /// Required designer variable.
+//        /// </summary>
+//        private System.ComponentModel.IContainer components = null;
+
+//        /// <summary>
+//        /// Clean up any resources being used.
+//        /// </summary>
+//        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+//        protected override void Dispose(bool disposing)
+//        {
+//            if (disposing && (components != null))
+//            {
+//                components.Dispose();
+//            }
+//            base.Dispose(disposing);
+//        }
+
+//        #region Windows Form Designer generated code
+
+//        /// <summary>
+//        /// Required method for Designer support - do not modify
+//        /// the contents of this method with the code editor.
+//        /// </summary>
+//        private void InitializeComponent()
+//        {
+//            SuspendLayout();
+//            // 
+//            // Form2
+//            // 
+//            AutoScaleMode = AutoScaleMode.None;
+//            ClientSize = new Size(500, 606);
+//            MaximumSize = new Size(522, 662);
+//            MinimumSize = new Size(522, 662);
+//            Name = "Form2";
+//            Text = "mainForm";
+//            ResumeLayout(false);
+//            PerformLayout();
+//        }
+
+//        #endregion
+//    }
+//}
+//namespace inventManagementApp
+//{
+//    partial class Form1
+//    {
+//        private Form1 parentForm; // `Form1` の参照を保持
+//        private Button buttonBack;
+//        private void InitializeComponent2()
+//        {
+//            buttonBack = new Button();
+//            SuspendLayout();
+//            // 
+//            // buttonBack
+//            // 
+//            buttonBack.Location = new Point(12, 12);
+//            buttonBack.Name = "buttonBack";
+//            buttonBack.Size = new Size(79, 37);
+//            buttonBack.TabIndex = 0;
+//            buttonBack.Text = "Back";
+//            buttonBack.UseVisualStyleBackColor = true;
+//            buttonBack.Click += buttonBack_Click;
+//            // 
+//            // Form2
+//            // 
+//            ClientSize = new Size(284, 261);
+//            Controls.Add(buttonBack);
+//            Name = "Form2";
+//            ResumeLayout(false);
+//        }
+
+//        private void buttonBack_Click(object sender, EventArgs e)
+//        {
+//            parentForm.Show(); // `Form1` を再表示
+//            this.Close(); // `DetailForm` を閉じる
+//        }
+//    }
+//}
