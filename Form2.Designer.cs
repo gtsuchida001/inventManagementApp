@@ -186,7 +186,7 @@ namespace inventManagementApp
         }
     }
 
-        // 🔹 画像を読み込んで表示する
+        // 🔹 画像を読み込んで表示する//
         private void LoadImage(int id)
         {
             Image originalImage = GetImageById(id);

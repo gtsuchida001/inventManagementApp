@@ -24,7 +24,7 @@ namespace inventManagementApp
             this.FormClosing += Form2_FormClosing;
             this.buttonBack.Click += buttonBack_Click;
             this.imageUploadButton.Click += (sender, e) => imageUploadButton_Click(sender, e);
-            this.imageDeleteButton.Click += (sender, e) => imageDeleteButton_Click(sender, e);
+            this.imageDeleteButton.Click += (sender, e) => imageDeleteButton_Click(sender, e);//
         }
     }
 }
