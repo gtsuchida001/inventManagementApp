@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.ComponentModel;
+using DatabaseHelper;
 
 namespace inventManagementApp
 {
@@ -40,11 +41,6 @@ namespace inventManagementApp
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
-
             components = new Container();
             labelQuantity = new Label();
             textBoxQuantity = new TextBox();
@@ -60,6 +56,7 @@ namespace inventManagementApp
             clearbutton = new Button();
             combinedbutton = new Button();
             combinedquantitylabel = new Label();
+            allReset = new Button();
             panelcontain.SuspendLayout();
             SuspendLayout();
             // 
@@ -202,10 +199,20 @@ namespace inventManagementApp
             combinedquantitylabel.TabIndex = 13;
             combinedquantitylabel.Text = "合計数：";
             // 
+            // allReset
+            // 
+            allReset.Location = new Point(0, 0);
+            allReset.Name = "allReset";
+            allReset.Size = new Size(107, 36);
+            allReset.TabIndex = 14;
+            allReset.Text = "all reset";
+            allReset.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(500, 606);
+            Controls.Add(allReset);
             Controls.Add(combinedquantitylabel);
             Controls.Add(combinedbutton);
             Controls.Add(clearbutton);
@@ -644,6 +651,20 @@ namespace inventManagementApp
 
             private void DetailButton_Click(object sender, EventArgs e)
             {
+                Button clickedButton = sender as Button;
+                if (clickedButton == null) return;
+                int id = 1;
+
+                // ボタンの Tag に ID が設定されているか確認
+                if (clickedButton.Tag != null && int.TryParse(clickedButton.Tag.ToString(), out int tagId))
+                {
+                    id = tagId; // 既存の ID を使用
+                }
+                else
+                {
+                    id = DatabaseHelper.DatabaseHelper.GetNewId();  // 新しい ID を取得
+                    clickedButton.Tag = id;
+                }
                 Form1 parentForm = this.FindForm() as Form1;
                 if (parentForm == null)
                 {
@@ -651,7 +672,7 @@ namespace inventManagementApp
                     return;
                 }
 
-                Form2 detailForm = new Form2(parentForm);
+                Form2 detailForm = new Form2(parentForm, id); // ID を渡す
                 detailForm.StartPosition = FormStartPosition.Manual; // 手動で位置を設定
                 detailForm.Location = parentForm.Location; // **Form1 の位置を適用**
                 detailForm.Size = parentForm.Size; // **Form1 のサイズを適用（必要なら）**
@@ -659,35 +680,29 @@ namespace inventManagementApp
                 detailForm.Show();
                 parentForm.Hide(); // Form1 を非表示
             }
-
             // **プロパティ: チェックされているか**
             public bool IsChecked => checkBox.Checked;
 
             // **プロパティ: 数量のテキスト**
             public string QuantityText => Quantitylabel.Text;
         }
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("データベースを完全に初期化します。よろしいですか？",
+                                         "データベースリセット", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                DatabaseHelper.DatabaseHelper.ResetDatabase();
+                MessageBox.Show("データベースを初期化しました。", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
 
+        }
 
         #endregion
         private const int maxQuantity = 9999;
         private const int minQuantity = 0;
         private const int FixedHeight = 100;
-        //private const int FixedHeight =50;
         private System.Windows.Forms.Timer timer;
-
-        //private Label labelQuantity;
-        //private TextBox textBoxQuantity;
-        //private Button addButton;
-        //private Button decreaseButton;
-        //private TextBox commentbox;
-        //private Label time;
-        //private Label title;
-        //private Button createButton;
-        //private TableLayoutPanel tableLayoutPanel;
-        //private Panel panelcontain;
-        //private Button clearbutton;
-        //private Button combinedbutton;
-        //private Label combinedquantitylabel;
 
         public Label labelQuantity;
         public TextBox textBoxQuantity;
@@ -702,5 +717,6 @@ namespace inventManagementApp
         public Button clearbutton;
         public Button combinedbutton;
         public Label combinedquantitylabel;
+        private Button allReset;
     }
 }
