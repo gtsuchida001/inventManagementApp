@@ -132,6 +132,7 @@ namespace inventManagementApp
             title.TabIndex = 7;
             title.Text = "freemake";
             // 
+            //
             // timer
             // 
             timer.Enabled = true;
