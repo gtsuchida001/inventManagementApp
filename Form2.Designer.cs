@@ -36,7 +36,7 @@ namespace inventManagementApp
             imageUploadButton.Name = "imageUploadButton";
             imageUploadButton.Size = new Size(247, 84);
             imageUploadButton.TabIndex = 1;
-            imageUploadButton.Text = "button1";
+            imageUploadButton.Text = "imageUploadButton";
             imageUploadButton.UseVisualStyleBackColor = false;
             // 
             // imageDeleteButton
@@ -46,7 +46,7 @@ namespace inventManagementApp
             imageDeleteButton.Name = "imageDeleteButton";
             imageDeleteButton.Size = new Size(253, 84);
             imageDeleteButton.TabIndex = 2;
-            imageDeleteButton.Text = "button2";
+            imageDeleteButton.Text = "imageDeleteButton";
             imageDeleteButton.UseVisualStyleBackColor = false;
             // 
             // pictureBox1
