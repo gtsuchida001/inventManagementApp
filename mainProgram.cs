@@ -4,7 +4,7 @@ namespace inventManagementApp
 {
     internal static class mainProgram
     {
-        /// <summary>
+        /// <summary>.
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
