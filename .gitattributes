@@ -1,0 +1,9 @@
+# すべてのテキストファイルを LF に統一
+* text=auto eol=lf
+
+# C# コードの改行を LF に統一
+*.cs text eol=lf
+*.cshtml text eol=lf
+*.json text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
