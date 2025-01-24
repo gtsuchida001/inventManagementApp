@@ -35,6 +35,7 @@ namespace DatabaseHelper
 
             try
             {
+                // データベースファイルが存在しない場合のみ作成
                 if (!File.Exists(dbPath))
                 {
                     SQLiteConnection.CreateFile(dbPath);
@@ -43,23 +44,37 @@ namespace DatabaseHelper
                 using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
                 {
                     connection.Open();
-                    string createTableQuery = @"
-                    CREATE TABLE IF NOT EXISTS images (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        image_data BLOB
-                    );";
 
-                    using (var command = new SQLiteCommand(createTableQuery, connection))
+                    // テーブルが既に存在するかチェック
+                    bool tableExists = false;
+                    using (var checkCommand = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='images';", connection))
                     {
-                        command.ExecuteNonQuery();
+                        using (var reader = checkCommand.ExecuteReader())
+                        {
+                            tableExists = reader.HasRows; // データがあればテーブルは既に存在する
+                        }
+                    }
+
+                    // テーブルが存在しない場合のみ作成
+                    if (!tableExists)
+                    {
+                        string createTableQuery = @"
+                        CREATE TABLE images (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            image_data BLOB
+                        );";
+                        using (var command = new SQLiteCommand(createTableQuery, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"データベースのロードを失敗: {ex.Message}");
-                System.Windows.Forms.MessageBox.Show($"データベースのロードを失敗\n{ex.Message}",
-                    "エラー", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                Console.WriteLine($"データベースのロードに失敗しました: {ex.Message}");
+                MessageBox.Show($"データベースのロードに失敗しました。\n{ex.Message}",
+                    "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         public static void ResetDatabase()
@@ -81,4 +96,4 @@ namespace DatabaseHelper
         }
     }
 }
-//
+
