@@ -28,23 +28,38 @@ namespace DatabaseHelper
         }
         public static void InitializeDatabase()
         {
-            if (!File.Exists(dbPath))
-            {
-                SQLiteConnection.CreateFile(dbPath);
-            }
+            //if (!File.Exists(dbPath))
+            //{
+            //    SQLiteConnection.CreateFile(dbPath);
+            //}
 
-            using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+            try
             {
-                connection.Open();
-                string createTableQuery = @"
-                CREATE TABLE IF NOT EXISTS images (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    image_data BLOB
-                );";
-                using (var command = new SQLiteCommand(createTableQuery, connection))
+                if (!File.Exists(dbPath))
                 {
-                    command.ExecuteNonQuery();
+                    SQLiteConnection.CreateFile(dbPath);
                 }
+
+                using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                {
+                    connection.Open();
+                    string createTableQuery = @"
+                    CREATE TABLE IF NOT EXISTS images (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        image_data BLOB
+                    );";
+
+                    using (var command = new SQLiteCommand(createTableQuery, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"データベースのロードを失敗: {ex.Message}");
+                System.Windows.Forms.MessageBox.Show($"データベースのロードを失敗\n{ex.Message}",
+                    "エラー", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
         }
         public static void ResetDatabase()
