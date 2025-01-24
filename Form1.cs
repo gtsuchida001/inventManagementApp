@@ -1,139 +1,161 @@
+ï»¿using System.Data.SQLite;
+using DatabaseHelper;
+
 namespace inventManagementApp
 {
     public partial class Form1 : Form
     {
         private static string logFilePath = Path.Combine(Application.StartupPath, "inventManagementApp.log");
+        private ListBox listBoxItems;
+        //private Button addButton;
+        private TextBox textBoxName;
 
         public Form1()
         {
-<<<<<<< HEAD
-            InitializeComponent();
-=======
-            InitializeComponent(); //ƒtƒH[ƒ€‚Ì‰Šú‰»
-            this.Shown += Form1_Shown;
+            InitializeComponent(); //ãƒ•ã‚©ãƒ¼ãƒ ã®åˆæœŸåŒ–
 
-            // ƒ^ƒCƒgƒ‹ƒo[‚Íc‚µ‚Â‚ÂAƒEƒBƒ“ƒhƒE‚Ì˜g‚ğÁ‚·
+            this.Load += new EventHandler(Form1_Load); // `Form1_Load` ã‚’ç™»éŒ².
+            //this.Shown += Form1_Shown;
+
+            // ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã¯æ®‹ã—ã¤ã¤ã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ ã‚’æ¶ˆã™
             this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            this.ControlBox = true;  // •Â‚¶‚éƒ{ƒ^ƒ“i~j‚ğ—LŒø‰»
-            this.Text = "mainForm";  // ƒ^ƒCƒgƒ‹ƒo[‚ÌƒeƒLƒXƒg‚ğw’è
-            this.Padding = new Padding(0); // ˜gü‚ğíœ‚µ‚Ä‚àƒŒƒCƒAƒEƒg‚ª•ö‚ê‚È‚¢‚æ‚¤‚É
+            this.ControlBox = true;  // é–‰ã˜ã‚‹ãƒœã‚¿ãƒ³ï¼ˆÃ—ï¼‰ã‚’æœ‰åŠ¹åŒ–
+            this.Text = "mainForm";  // ã‚¿ã‚¤ãƒˆãƒ«ãƒãƒ¼ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®š
+            this.Padding = new Padding(0); // æ ç·šã‚’å‰Šé™¤ã—ã¦ã‚‚ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆãŒå´©ã‚Œãªã„ã‚ˆã†ã«
 
-            // ƒEƒBƒ“ƒhƒE‚ğ’†‰›‚É”z’u
+            // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä¸­å¤®ã«é…ç½®
             this.StartPosition = FormStartPosition.CenterScreen;
 
             this.AutoScaleMode = AutoScaleMode.None;
-            textBoxQuantity.KeyPress += textBoxQuantity_KeyPress; // ƒeƒLƒXƒgƒ{ƒbƒNƒX‚Ì’l‚Ìæ“¾A”ÍˆÍˆ—A‘‚«Š·‚¦
-            addButton.Click += addButton_Click; // +ƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNˆ—
-            decreaseButton.Click += decreaseButton_Click; // -ƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNˆ—
-            createButton.Click += createbutton_Click; // ’Ç‰Áƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNˆ—
-            clearbutton.Click += clearbutton_Click; // ƒNƒŠƒAƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNˆ—
-            combinedbutton.Click += combinedbutton_Click; // ‡Zƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNˆ—
+            textBoxQuantity.KeyPress += textBoxQuantity_KeyPress; // ãƒ†ã‚­ã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹ã®å€¤ã®å–å¾—ã€ç¯„å›²å‡¦ç†ã€æ›¸ãæ›ãˆ
+            addButton.Click += addButton_Click;            // +ãƒœã‚¿ãƒ³ã®ã‚¯ãƒªãƒƒã‚¯å‡¦ç†
+            decreaseButton.Click += decreaseButton_Click; // -ãƒœã‚¿ãƒ³ã®ã‚¯ãƒªãƒƒã‚¯å‡¦ç†
+            createButton.Click += createbutton_Click; // è¿½åŠ ãƒœã‚¿ãƒ³ã®ã‚¯ãƒªãƒƒã‚¯å‡¦ç†
+            clearbutton.Click += clearbutton_Click; // ã‚¯ãƒªã‚¢ãƒœã‚¿ãƒ³ã®ã‚¯ãƒªãƒƒã‚¯å‡¦ç†
+            combinedbutton.Click += combinedbutton_Click; // åˆç®—ãƒœã‚¿ãƒ³ã®ã‚¯ãƒªãƒƒã‚¯å‡¦ç†
+            allReset.Click += resetButton_Click;
 
             //this.Font = new Font("Yu Gothic UI", 6F);
 
-            LogApplication(); // ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‹N“®‚ÌƒƒOo—Í
-
-
-            // **ƒTƒ“ƒvƒ‹ƒf[ƒ^
-            //if (tableLayoutPanel.Controls.Count == 0)
-            //{
-            //    for (int i = 0; i < 3; i++)
-            //    {
-            //        var newItem = new ListItemControl($"ƒTƒ“ƒvƒ‹ƒRƒƒ“ƒg {i + 1}");
-            //        tableLayoutPanel.RowCount++;
-            //        tableLayoutPanel.Controls.Add(newItem, 0, tableLayoutPanel.RowCount - 1);
-            //    }
-            //}
+            //LogApplication(); // ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³èµ·å‹•æ™‚ã®ãƒ­ã‚°å‡ºåŠ›
         }
 
-        // ƒtƒH[ƒ€‚Ì˜g‚¾‚¯‚ğíœiƒ^ƒCƒgƒ‹ƒo[‚Íc‚·j
-        //protected override CreateParams CreateParams
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            DatabaseHelper.DatabaseHelper.InitializeDatabase(); // ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã‚’åˆæœŸåŒ–
+        }
+
+        //private void LoadItems()
         //{
-        //    get
+        //    listBoxItems.Items.Clear(); // `ListBox` ã‚’ã‚¯ãƒªã‚¢
+
+        //    using (var connection = DatabaseHelper.GetConnection())
         //    {
-        //        CreateParams cp = base.CreateParams;
-        //        cp.Style &= ~0x00800000; // WS_BORDER‚ğíœi˜g‚¾‚¯Á‚·j
-        //        cp.ExStyle &= ~0x00020000; // WS_EX_CLIENTEDGE‚ğíœi‰e‚ğÁ‚·j
-        //        return cp;
+        //        connection.Open();
+        //        string query = "SELECT Id, Name FROM Items";
+        //        using (var command = new SQLiteCommand(query, connection))
+        //        using (var reader = command.ExecuteReader())
+        //        {
+        //            while (reader.Read())
+        //            {
+        //                int id = reader.GetInt32(0);
+        //                string name = reader.GetString(1);
+        //                listBoxItems.Items.Add(new ListItem(id, name));
+        //            }
+        //        }
         //    }
         //}
-        public string TextBoxValue
-        {
-            get => textBoxQuantity.Text; // ’l‚ğæ“¾
-            set => textBoxQuantity.Text = value; // ’l‚ğİ’è
-        }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            base.OnFormClosing(e);
-            // **ƒAƒvƒŠI—¹‚ÌƒƒO‚ğ‹L˜^**
-            LogApplication();
-        }
+        //private void addButton_Click(object sender, EventArgs e)
+        //{
+        //    string itemName = textBoxName.Text.Trim();
+        //    if (string.IsNullOrEmpty(itemName))
+        //    {
+        //        MessageBox.Show("ã‚¢ã‚¤ãƒ†ãƒ åã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
+        //        return;
+        //    }
 
-        public static string GetControlPositionLog(string timestamp, Control control, string name)
-        {
-            if (control == null)
-            {
-                return $"{timestamp} - {name}: ‘¶İ‚µ‚Ü‚¹‚ñ\n";
-            }
-            return $"{timestamp} - {name}‚ÌˆÊ’u: X={control.Location.X}, Y={control.Location.Y}\n";
-        }
+        //    int newId = InsertItem(itemName); // ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã«è¿½åŠ 
+        //    listBoxItems.Items.Add(new ListItem(newId, itemName)); // `ListBox` ã«è¿½åŠ 
+        //}
 
-        private void Form1_Shown(object? sender, EventArgs e)
-        {
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        //public string TextBoxValue
+        //{
+        //    get => textBoxQuantity.Text; // å€¤ã‚’å–å¾—
+        //    set => textBoxQuantity.Text = value; // å€¤ã‚’è¨­å®š
+        //}
 
-            string logContent = $"{timestamp} - ÀsŒã‚ÌŒÄ‚Î‚ê‚éƒƒO\n";
-            logContent += $"{timestamp} - ƒtƒH[ƒ€ƒTƒCƒY: •={this.Width}, ‚‚³={this.Height}\n";
-            logContent += GetControlPositionLog(timestamp, this, "”wŒi");
-            logContent += GetControlPositionLog(timestamp, title, "ƒAƒvƒŠƒ^ƒCƒgƒ‹ifreemakej");
-            logContent += GetControlPositionLog(timestamp, labelQuantity, "”—Êƒ‰ƒxƒ‹");
-            logContent += GetControlPositionLog(timestamp, textBoxQuantity, "”—ÊƒeƒLƒXƒgƒ{ƒbƒNƒX");
-            logContent += GetControlPositionLog(timestamp, addButton, "{ƒ{ƒ^ƒ“");
-            logContent += GetControlPositionLog(timestamp, decreaseButton, "|ƒ{ƒ^ƒ“");
-            logContent += GetControlPositionLog(timestamp, time, "ƒ‰ƒxƒ‹");
+        //protected override void OnFormClosing(FormClosingEventArgs e)
+        //{
+        //    base.OnFormClosing(e);
+        //    // **ã‚¢ãƒ—ãƒªçµ‚äº†æ™‚ã®ãƒ­ã‚°ã‚’è¨˜éŒ²**
+        //    //LogApplication();
+        //}
 
-            // **ƒƒO‚ğƒtƒ@ƒCƒ‹‚É‘‚«‚İ**
-            File.AppendAllText(logFilePath, logContent + Environment.NewLine);
-            Console.WriteLine("show‚ÌŒã‚ÉƒƒO‚ª³í‚Éo—Í‚³‚ê‚Ü‚µ‚½B");
-        }
+        //public static string GetControlPositionLog(string timestamp, Control control, string name)
+        //{
+        //    if (control == null)
+        //    {
+        //        return $"{timestamp} - {name}: å­˜åœ¨ã—ã¾ã›ã‚“\n";
+        //    }
+        //    return $"{timestamp} - {name}ã®ä½ç½®: X={control.Location.X}, Y={control.Location.Y}\n";
+        //}
+
+        //private void Form1_Shown(object? sender, EventArgs e)
+        //{
+        //    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+        //    string logContent = $"{timestamp} - å®Ÿè¡Œå¾Œã®å‘¼ã°ã‚Œã‚‹ãƒ­ã‚°\n";
+        //    logContent += $"{timestamp} - ãƒ•ã‚©ãƒ¼ãƒ ã‚µã‚¤ã‚º: å¹…={this.Width}, é«˜ã•={this.Height}\n";
+        //    logContent += GetControlPositionLog(timestamp, this, "èƒŒæ™¯");
+        //    logContent += GetControlPositionLog(timestamp, title, "ã‚¢ãƒ—ãƒªã‚¿ã‚¤ãƒˆãƒ«ï¼ˆfreemakeï¼‰");
+        //    logContent += GetControlPositionLog(timestamp, labelQuantity, "æ•°é‡ãƒ©ãƒ™ãƒ«");
+        //    logContent += GetControlPositionLog(timestamp, textBoxQuantity, "æ•°é‡ãƒ†ã‚­ã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹");
+        //    logContent += GetControlPositionLog(timestamp, addButton, "ï¼‹ãƒœã‚¿ãƒ³");
+        //    logContent += GetControlPositionLog(timestamp, decreaseButton, "ï¼ãƒœã‚¿ãƒ³");
+        //    logContent += GetControlPositionLog(timestamp, time, "æ™‚åˆ»ãƒ©ãƒ™ãƒ«");
+
+        //    // **ãƒ­ã‚°ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãè¾¼ã¿**
+        //    File.AppendAllText(logFilePath, logContent + Environment.NewLine);
+        //    Console.WriteLine("showã®å¾Œã«ãƒ­ã‚°ãŒæ­£å¸¸ã«å‡ºåŠ›ã•ã‚Œã¾ã—ãŸã€‚");
+        //}
+
 
         /// <summary>
-        /// **ƒAƒvƒŠ‹N“®‚ÌƒƒO‚ğ‹L˜^**
+        /// **ã‚¢ãƒ—ãƒªèµ·å‹•æ™‚ã®ãƒ­ã‚°ã‚’è¨˜éŒ²**
         /// </summary>
-        public static void LogApplication()
-        {
-            try
-            {
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        //public static void LogApplication()
+        //{
+        //    try
+        //    {
+        //        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                // **ƒtƒH[ƒ€‚Ìî•ñ‚ğæ“¾‚·‚é**
-                Form1? mainForm = Application.OpenForms.OfType<Form1>().FirstOrDefault();
-                if (mainForm == null)
-                {
-                    return;
-                }
+        //        // **ãƒ•ã‚©ãƒ¼ãƒ ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹**
+        //        Form1? mainForm = Application.OpenForms.OfType<Form1>().FirstOrDefault();
+        //        if (mainForm == null)
+        //        {
+        //            return;
+        //        }
 
-                string logContent = $"{timestamp} - ‰æ–ÊI—¹Œã‚ÉŒÄ‚Î‚ê‚éƒƒO\n";
-                logContent += $"{timestamp} - ƒtƒH[ƒ€ƒTƒCƒY: •={mainForm.Width}, ‚‚³={mainForm.Height}\n";
-                logContent += GetControlPositionLog(timestamp, mainForm, "”wŒi");
-                logContent += GetControlPositionLog(timestamp, mainForm.title, "ƒAƒvƒŠƒ^ƒCƒgƒ‹ifreemakej");
-                logContent += GetControlPositionLog(timestamp, mainForm.labelQuantity, "”—Êƒ‰ƒxƒ‹");
-                logContent += GetControlPositionLog(timestamp, mainForm.textBoxQuantity, "”—ÊƒeƒLƒXƒgƒ{ƒbƒNƒX");
-                logContent += GetControlPositionLog(timestamp, mainForm.addButton, "{ƒ{ƒ^ƒ“");
-                logContent += GetControlPositionLog(timestamp, mainForm.decreaseButton, "|ƒ{ƒ^ƒ“");
-                logContent += GetControlPositionLog(timestamp, mainForm.time, "ƒ‰ƒxƒ‹");
+        //        string logContent = $"{timestamp} - ç”»é¢çµ‚äº†å¾Œã«å‘¼ã°ã‚Œã‚‹ãƒ­ã‚°\n";
+        //        logContent += $"{timestamp} - ãƒ•ã‚©ãƒ¼ãƒ ã‚µã‚¤ã‚º: å¹…={mainForm.Width}, é«˜ã•={mainForm.Height}\n";
+        //        logContent += GetControlPositionLog(timestamp, mainForm, "èƒŒæ™¯");
+        //        logContent += GetControlPositionLog(timestamp, mainForm.title, "ã‚¢ãƒ—ãƒªã‚¿ã‚¤ãƒˆãƒ«ï¼ˆfreemakeï¼‰");
+        //        logContent += GetControlPositionLog(timestamp, mainForm.labelQuantity, "æ•°é‡ãƒ©ãƒ™ãƒ«");
+        //        logContent += GetControlPositionLog(timestamp, mainForm.textBoxQuantity, "æ•°é‡ãƒ†ã‚­ã‚¹ãƒˆãƒœãƒƒã‚¯ã‚¹");
+        //        logContent += GetControlPositionLog(timestamp, mainForm.addButton, "ï¼‹ãƒœã‚¿ãƒ³");
+        //        logContent += GetControlPositionLog(timestamp, mainForm.decreaseButton, "ï¼ãƒœã‚¿ãƒ³");
+        //        logContent += GetControlPositionLog(timestamp, mainForm.time, "æ™‚åˆ»ãƒ©ãƒ™ãƒ«");
 
-                // **ƒƒO‚ğƒtƒ@ƒCƒ‹‚É‹L˜^**
-                File.AppendAllText(logFilePath, logContent + Environment.NewLine);
-                Console.WriteLine("ƒAƒvƒŠI—¹ƒƒO‚ª‹L˜^‚³‚ê‚Ü‚µ‚½B");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ƒƒO‚Ìo—Í‚É¸”s‚µ‚Ü‚µ‚½: " + ex.Message);
-            }
->>>>>>> stage
-        }
+        //        // **ãƒ­ã‚°ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«è¨˜éŒ²**
+        //        File.AppendAllText(logFilePath, logContent + Environment.NewLine);
+        //        Console.WriteLine("ã‚¢ãƒ—ãƒªçµ‚äº†ãƒ­ã‚°ãŒè¨˜éŒ²ã•ã‚Œã¾ã—ãŸã€‚");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("ãƒ­ã‚°ã®å‡ºåŠ›ã«å¤±æ•—ã—ã¾ã—ãŸ: " + ex.Message);
+        //    }
+        //}
     }
 }
-    
+

@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("inventManagementApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+97748bb31855234dde9c19e5b941e62b560a413a")]
->>>>>>> stage
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b6316decc73278eb6b7136aa8a467adc6be184ba")]
 [assembly: System.Reflection.AssemblyProductAttribute("inventManagementApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("inventManagementApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

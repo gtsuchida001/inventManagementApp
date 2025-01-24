@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-﻿namespace inventManagementApp
-=======
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +9,9 @@ using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.ComponentModel;
+using DatabaseHelper;
 
 namespace inventManagementApp
->>>>>>> stage
 {
     partial class Form1
     {
@@ -43,17 +41,6 @@ namespace inventManagementApp
         /// </summary>
         private void InitializeComponent()
         {
-<<<<<<< HEAD
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
-        }
-
-        #endregion
-    }
-}
-=======
             components = new Container();
             labelQuantity = new Label();
             textBoxQuantity = new TextBox();
@@ -69,6 +56,7 @@ namespace inventManagementApp
             clearbutton = new Button();
             combinedbutton = new Button();
             combinedquantitylabel = new Label();
+            allReset = new Button();
             panelcontain.SuspendLayout();
             SuspendLayout();
             // 
@@ -211,10 +199,20 @@ namespace inventManagementApp
             combinedquantitylabel.TabIndex = 13;
             combinedquantitylabel.Text = "合計数：";
             // 
+            // allReset
+            // 
+            allReset.Location = new Point(0, 0);
+            allReset.Name = "allReset";
+            allReset.Size = new Size(107, 36);
+            allReset.TabIndex = 14;
+            allReset.Text = "all reset";
+            allReset.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(500, 606);
+            Controls.Add(allReset);
             Controls.Add(combinedquantitylabel);
             Controls.Add(combinedbutton);
             Controls.Add(clearbutton);
@@ -382,7 +380,7 @@ namespace inventManagementApp
                 int rowIndex = tableLayoutPanel.RowCount;
 
                 // 新しいリストアイテムを作成
-                var newItem = new ListItemControl(textBoxQuantity.Text,commentbox.Text, rowIndex);
+                var newItem = new ListItemControl(textBoxQuantity.Text, commentbox.Text, rowIndex);
 
                 // 削除イベントの設定
                 newItem.DeleteClicked += (s, args) =>
@@ -535,6 +533,7 @@ namespace inventManagementApp
             private Label Quantitylabel;
             private Label commentlabel;
             private Button deleteButton;
+            private Button detailButton;
             private int rowIndex;
 
             public event EventHandler DeleteClicked; // 削除ボタンが押されたときのイベント
@@ -572,7 +571,7 @@ namespace inventManagementApp
                     Font = new Font("Yu Gothic UI", 12F, GraphicsUnit.Pixel),
                     AutoSize = false,
                     TextAlign = ContentAlignment.MiddleLeft,
-                    Width = 90, // **時間の幅を固定**
+                    Width = 70, // **時間の幅を固定**
                     Height = 30
                 };
 
@@ -591,7 +590,7 @@ namespace inventManagementApp
                     Font = new Font("Yu Gothic UI", 12F, GraphicsUnit.Pixel),
                     Text = commentText,
                     AutoSize = false,
-                    Width = 100, // **コメントの幅を固定**
+                    Width = 80, // **コメントの幅を固定**
                     Height = 30,
                     TextAlign = ContentAlignment.MiddleLeft,  // **テキストの位置を左寄せ**
                     AutoEllipsis = true,  // **長いテキストは「...」で省略**
@@ -603,9 +602,19 @@ namespace inventManagementApp
                 {
                     Font = new Font("Yu Gothic UI", 12F, GraphicsUnit.Pixel),
                     Text = "削除",
-                    Width = 60,
+                    Width = 50,
                     Height = 30
                 };
+
+                detailButton = new Button
+                {
+                    Font = new Font("Yu Gothic UI", 12F, GraphicsUnit.Pixel),
+                    Text = "詳細",
+                    Width = 50,
+                    Height = 30
+                };
+
+                detailButton.Click += DetailButton_Click;
                 deleteButton.Click += (s, e) => DeleteClicked?.Invoke(this, EventArgs.Empty);
                 checkBox.CheckedChanged += CheckBox_CheckedChanged;
 
@@ -615,6 +624,7 @@ namespace inventManagementApp
                 layoutPanel.Controls.Add(Quantitylabel);
                 layoutPanel.Controls.Add(commentlabel);
                 layoutPanel.Controls.Add(deleteButton);
+                layoutPanel.Controls.Add(detailButton);
 
                 // この UserControl に FlowLayoutPanel を追加**
                 this.Controls.Add(layoutPanel);
@@ -638,35 +648,61 @@ namespace inventManagementApp
                     }
                 }
             }
-            
+
+            private void DetailButton_Click(object sender, EventArgs e)
+            {
+                Button clickedButton = sender as Button;
+                if (clickedButton == null) return;
+                int id = 1;
+
+                // ボタンの Tag に ID が設定されているか確認
+                if (clickedButton.Tag != null && int.TryParse(clickedButton.Tag.ToString(), out int tagId))
+                {
+                    id = tagId; // 既存の ID を使用
+                }
+                else
+                {
+                    id = DatabaseHelper.DatabaseHelper.GetNewId();  // 新しい ID を取得
+                    clickedButton.Tag = id;
+                }
+                Form1 parentForm = this.FindForm() as Form1;
+                if (parentForm == null)
+                {
+                    MessageBox.Show("親フォームが見つかりません");
+                    return;
+                }
+
+                Form2 detailForm = new Form2(parentForm, id); // ID を渡す
+                detailForm.StartPosition = FormStartPosition.Manual; // 手動で位置を設定
+                detailForm.Location = parentForm.Location; // **Form1 の位置を適用**
+                detailForm.Size = parentForm.Size; // **Form1 のサイズを適用（必要なら）**
+
+                detailForm.Show();
+                parentForm.Hide(); // Form1 を非表示
+            }
             // **プロパティ: チェックされているか**
             public bool IsChecked => checkBox.Checked;
 
             // **プロパティ: 数量のテキスト**
             public string QuantityText => Quantitylabel.Text;
         }
-        
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("データベースを完全に初期化します。よろしいですか？",
+                                         "データベースリセット", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                DatabaseHelper.DatabaseHelper.ResetDatabase();
+                MessageBox.Show("データベースを初期化しました。", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+        }
 
         #endregion
         private const int maxQuantity = 9999;
         private const int minQuantity = 0;
         private const int FixedHeight = 100;
-        //private const int FixedHeight =50;
         private System.Windows.Forms.Timer timer;
-
-        //private Label labelQuantity;
-        //private TextBox textBoxQuantity;
-        //private Button addButton;
-        //private Button decreaseButton;
-        //private TextBox commentbox;
-        //private Label time;
-        //private Label title;
-        //private Button createButton;
-        //private TableLayoutPanel tableLayoutPanel;
-        //private Panel panelcontain;
-        //private Button clearbutton;
-        //private Button combinedbutton;
-        //private Label combinedquantitylabel;
 
         public Label labelQuantity;
         public TextBox textBoxQuantity;
@@ -681,8 +717,6 @@ namespace inventManagementApp
         public Button clearbutton;
         public Button combinedbutton;
         public Label combinedquantitylabel;
+        private Button allReset;
     }
 }
-
-
->>>>>>> stage
