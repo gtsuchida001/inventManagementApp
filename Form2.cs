@@ -19,12 +19,15 @@ namespace inventManagementApp
             InitializeComponent();
             this.parentForm = parent;
             this.currentId = id;
-            label1.Text = id.ToString();
+            idlabel.Text = id.ToString();
             LoadImage(id);
             this.FormClosing += Form2_FormClosing;
             this.buttonBack.Click += buttonBack_Click;
             this.imageUploadButton.Click += (sender, e) => imageUploadButton_Click(sender, e);
-            this.imageDeleteButton.Click += (sender, e) => imageDeleteButton_Click(sender, e);//
+            this.imageDeleteButton.Click += (sender, e) => imageDeleteButton_Click(sender, e);
+            this.reroad.Click += (sender, e) => Form2reroad_Click(sender, e);
+            Form2_Load();
+
         }
     }
 }
