@@ -98,20 +98,32 @@ namespace inventManagementApp
             this.Close(); //  `Form2` を閉じる
         }
         // 🔹 画像をデータベースに保存する処理
+        // 🔹 データベースに画像を保存する処理
         private void SaveImageToDatabase(int id, Image image)
-    {
-        using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
         {
-            connection.Open();
-            using (var command = new SQLiteCommand("INSERT OR REPLACE INTO images (id, image_data) VALUES (@id, @ImageData)", connection))
+            try
             {
-                byte[] imageData = ImageToByteArray(image);
-                command.Parameters.AddWithValue("@id", id);
-                command.Parameters.AddWithValue("@ImageData", imageData);
-                command.ExecuteNonQuery();
+                using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                {
+                    connection.Open();
+
+                    // 画像をバイト配列に変換
+                    byte[] imageData = ImageToByteArray(image);
+
+                    using (var command = new SQLiteCommand("UPDATE images SET image_data = @imageData WHERE id = @id", connection))
+                    {
+                        command.Parameters.AddWithValue("@imageData", imageData.Length > 0 ? (object)imageData : DBNull.Value); // 空データ対応
+                        command.Parameters.AddWithValue("@id", id);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("画像のデータベース保存に失敗しました。\n" + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-    }
+    
 
         // 🔹 画像をアップロードする処理
         private void imageUploadButton_Click(object sender, EventArgs e)
@@ -136,36 +148,42 @@ namespace inventManagementApp
             using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
             {
                 connection.Open();
-                using (var command = new SQLiteCommand("DELETE FROM images WHERE id = @id", connection))
+                using (var command = new SQLiteCommand("UPDATE images SET image_data = @emptyBlob WHERE id = @id", connection))
                 {
+                    command.Parameters.AddWithValue("@emptyBlob", new byte[0]); // 空の BLOB
                     command.Parameters.AddWithValue("@id", currentId);
                     command.ExecuteNonQuery();
                 }
             }
-            pictureBox1.Image = null; // 画像をクリア
+            pictureBox1.Image = null; // UI 側の画像をクリア
         }
+
 
 
         // 🔹 ID に基づいて画像を取得する
         public Image GetImageById(int id)
-    {
-        using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
         {
-            connection.Open();
-            using (var command = new SQLiteCommand("SELECT image_data FROM images WHERE id = @id", connection))
+            using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
             {
-                command.Parameters.AddWithValue("@id", id);
-                var result = command.ExecuteScalar();
-
-                if (result != null && result != DBNull.Value)
+                connection.Open();
+                using (var command = new SQLiteCommand("SELECT image_data FROM images WHERE id = @id", connection))
                 {
-                    byte[] imageData = (byte[])result;
-                    return ByteArrayToImage(imageData); // 画像データを変換して返す
+                    command.Parameters.AddWithValue("@id", id);
+                    var result = command.ExecuteScalar();
+
+                    if (result != null && result != DBNull.Value)
+                    {
+                        byte[] imageData = (byte[])result;
+                        return ByteArrayToImage(imageData); // 画像データを変換して返す
+                    }
+
+                    // **画像がない場合は透明な1x1ピクセルの画像を返す**
+                    return new Bitmap(1, 1);
                 }
+
             }
+            return null; // データがない場合は何も表示しない
         }
-        return null; // データがない場合は何も表示しない
-    }
 
     // 🔹 バイト配列を Image に変換
     private Image ByteArrayToImage(byte[] byteArray)
@@ -237,6 +255,5 @@ namespace inventManagementApp
         private PictureBox pictureBox1;
         private Label label1;
         private bool isBackButtonPressed = false;
-        private string dbPath = "image_database.db"; // SQLite データベースのパス
     }
 }
