@@ -12,7 +12,7 @@ namespace inventManagementApp
         private Form1 parentForm;
         private int currentId;
         //private bool isBackButtonPressed = false;
-        //private string dbPath = "image_database.db"; // SQLite データベースのパス
+        private string dbPath = "num_database.db"; // SQLite データベースのパス
 
         public Form2(Form1 parent, int id)
         {

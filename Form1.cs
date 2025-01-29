@@ -1,4 +1,5 @@
 ﻿using System.Data.SQLite;
+using System.Diagnostics;
 using DatabaseHelper;
 
 namespace inventManagementApp
@@ -13,9 +14,10 @@ namespace inventManagementApp
         public Form1()
         {
             InitializeComponent(); //フォームの初期化
-
+            DatabaseHelper.DatabaseHelper.InitializeDatabase(); // データベースを初期化
             this.Load += new EventHandler(Form1_Load); // `Form1_Load` を登録.
             //this.Shown += Form1_Shown;
+            LoadListItemsFromDatabase();
 
             // タイトルバーは残しつつ、ウィンドウの枠を消す
             this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
@@ -33,7 +35,8 @@ namespace inventManagementApp
             createButton.Click += createbutton_Click; // 追加ボタンのクリック処理
             clearbutton.Click += clearbutton_Click; // クリアボタンのクリック処理
             combinedbutton.Click += combinedbutton_Click; // 合算ボタンのクリック処理
-            allReset.Click += resetButton_Click;
+            //allReset.Click += resetButton_Click;
+
 
             //this.Font = new Font("Yu Gothic UI", 6F);
 
@@ -44,118 +47,60 @@ namespace inventManagementApp
         {
             DatabaseHelper.DatabaseHelper.InitializeDatabase(); // データベースを初期化
         }
+        public void LoadListItemsFromDatabase()
+        {
+            tableLayoutPanel.Controls.Clear(); // 追加前に一度クリア
+            tableLayoutPanel.RowCount = 0;
 
-        //private void LoadItems()
-        //{
-        //    listBoxItems.Items.Clear(); // `ListBox` をクリア
+            using (var connection = new SQLiteConnection($"Data Source={DatabaseHelper.DatabaseHelper.dbPath};Version=3;"))
+            {
+                connection.Open();
 
-        //    using (var connection = DatabaseHelper.GetConnection())
-        //    {
-        //        connection.Open();
-        //        string query = "SELECT Id, Name FROM Items";
-        //        using (var command = new SQLiteCommand(query, connection))
-        //        using (var reader = command.ExecuteReader())
-        //        {
-        //            while (reader.Read())
-        //            {
-        //                int id = reader.GetInt32(0);
-        //                string name = reader.GetString(1);
-        //                listBoxItems.Items.Add(new ListItem(id, name));
-        //            }
-        //        }
-        //    }
-        //}
+                // **削除されていないデータを取得**
+                using (var command = new SQLiteCommand("SELECT id, image_data, record_day, comment, Quantity FROM images WHERE is_deleted_id = 0;", connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        List<ListItemControl> items = new List<ListItemControl>();
+                        while (reader.Read())
+                        {
+                            int id = Convert.ToInt32(reader["id"]);
+                            byte[] imageData = reader["image_data"] as byte[];
+                            string recordDay = reader["record_day"] as string ?? "未設定"; // NULL の場合は "未設定"
+                            string comment = reader["comment"] as string ?? "なし"; // NULL の場合は "なし"
+                            string quantity = reader["Quantity"] as string ?? "0"; // NULL の場合は "0"
 
-        //private void addButton_Click(object sender, EventArgs e)
-        //{
-        //    string itemName = textBoxName.Text.Trim();
-        //    if (string.IsNullOrEmpty(itemName))
-        //    {
-        //        MessageBox.Show("アイテム名を入力してください。");
-        //        return;
-        //    }
+                            // **ListItemControl を作成**
+                            ListItemControl item = new ListItemControl(quantity, comment, recordDay, id);
+                            items.Add(item);
+                        }
+                        // **一括で TableLayoutPanel に追加**
+                        foreach (var item in items)
+                        {
+                            tableLayoutPanel.Controls.Add(item);
+                        }
+                        tableLayoutPanel.RowCount = tableLayoutPanel.Controls.Count;
+                    }
+                }
+            }
+            // **レイアウト更新**
+            AdjustTableLayoutSize();
 
-        //    int newId = InsertItem(itemName); // データベースに追加
-        //    listBoxItems.Items.Add(new ListItem(newId, itemName)); // `ListBox` に追加
-        //}
+            // **確実に最下部にスクロール**
+            panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
+            panelcontain.AutoScrollPosition = new Point(0, panelcontain.VerticalScroll.Maximum);
 
-        //public string TextBoxValue
-        //{
-        //    get => textBoxQuantity.Text; // 値を取得
-        //    set => textBoxQuantity.Text = value; // 値を設定
-        //}
+            Task.Run(() =>
+            {
+                Thread.Sleep(100);
+                panelcontain.Invoke(new Action(() =>
+                {
+                    panelcontain.AutoScrollPosition = new Point(0, panelcontain.VerticalScroll.Maximum);
+                    Debug.WriteLine($"After Scroll: Value = {panelcontain.VerticalScroll.Value}, Maximum = {panelcontain.VerticalScroll.Maximum}");
+                }));
+            });
 
-        //protected override void OnFormClosing(FormClosingEventArgs e)
-        //{
-        //    base.OnFormClosing(e);
-        //    // **アプリ終了時のログを記録**
-        //    //LogApplication();
-        //}
-
-        //public static string GetControlPositionLog(string timestamp, Control control, string name)
-        //{
-        //    if (control == null)
-        //    {
-        //        return $"{timestamp} - {name}: 存在しません\n";
-        //    }
-        //    return $"{timestamp} - {name}の位置: X={control.Location.X}, Y={control.Location.Y}\n";
-        //}
-
-        //private void Form1_Shown(object? sender, EventArgs e)
-        //{
-        //    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-        //    string logContent = $"{timestamp} - 実行後の呼ばれるログ\n";
-        //    logContent += $"{timestamp} - フォームサイズ: 幅={this.Width}, 高さ={this.Height}\n";
-        //    logContent += GetControlPositionLog(timestamp, this, "背景");
-        //    logContent += GetControlPositionLog(timestamp, title, "アプリタイトル（freemake）");
-        //    logContent += GetControlPositionLog(timestamp, labelQuantity, "数量ラベル");
-        //    logContent += GetControlPositionLog(timestamp, textBoxQuantity, "数量テキストボックス");
-        //    logContent += GetControlPositionLog(timestamp, addButton, "＋ボタン");
-        //    logContent += GetControlPositionLog(timestamp, decreaseButton, "－ボタン");
-        //    logContent += GetControlPositionLog(timestamp, time, "時刻ラベル");
-
-        //    // **ログをファイルに書き込み**
-        //    File.AppendAllText(logFilePath, logContent + Environment.NewLine);
-        //    Console.WriteLine("showの後にログが正常に出力されました。");
-        //}
-
-
-        /// <summary>
-        /// **アプリ起動時のログを記録**
-        /// </summary>
-        //public static void LogApplication()
-        //{
-        //    try
-        //    {
-        //        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-        //        // **フォームの情報を取得する**
-        //        Form1? mainForm = Application.OpenForms.OfType<Form1>().FirstOrDefault();
-        //        if (mainForm == null)
-        //        {
-        //            return;
-        //        }
-
-        //        string logContent = $"{timestamp} - 画面終了後に呼ばれるログ\n";
-        //        logContent += $"{timestamp} - フォームサイズ: 幅={mainForm.Width}, 高さ={mainForm.Height}\n";
-        //        logContent += GetControlPositionLog(timestamp, mainForm, "背景");
-        //        logContent += GetControlPositionLog(timestamp, mainForm.title, "アプリタイトル（freemake）");
-        //        logContent += GetControlPositionLog(timestamp, mainForm.labelQuantity, "数量ラベル");
-        //        logContent += GetControlPositionLog(timestamp, mainForm.textBoxQuantity, "数量テキストボックス");
-        //        logContent += GetControlPositionLog(timestamp, mainForm.addButton, "＋ボタン");
-        //        logContent += GetControlPositionLog(timestamp, mainForm.decreaseButton, "－ボタン");
-        //        logContent += GetControlPositionLog(timestamp, mainForm.time, "時刻ラベル");
-
-        //        // **ログをファイルに記録**
-        //        File.AppendAllText(logFilePath, logContent + Environment.NewLine);
-        //        Console.WriteLine("アプリ終了ログが記録されました。");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("ログの出力に失敗しました: " + ex.Message);
-        //    }
-        //}
+        }
     }
 }
 

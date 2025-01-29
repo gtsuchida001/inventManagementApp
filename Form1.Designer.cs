@@ -19,6 +19,8 @@ namespace inventManagementApp
         ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        //public List<int> newIds = new List<int>(); // newId を保持するリスト
+        public int newIds = 0; // **ID を保持するメンバ変数**
 
         /// <summary>
         ///  Clean up any resources being used.
@@ -149,13 +151,14 @@ namespace inventManagementApp
             // 
             // tableLayoutPanel
             // 
-            tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel.AutoSize = true;  // **自動サイズ調整を有効化**
+            tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;  // **サイズをコンテンツに合わせる**
             tableLayoutPanel.ColumnCount = 1;
             tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100.000008F));
-            tableLayoutPanel.Location = new Point(14, 12);
+            tableLayoutPanel.Location = new Point(14, 0);
             tableLayoutPanel.Name = "tableLayoutPanel";
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            tableLayoutPanel.Size = new Size(407, 241);
+            tableLayoutPanel.Size = new Size(407, 267);
             tableLayoutPanel.TabIndex = 8;
             // 
             // panelcontain
@@ -360,62 +363,49 @@ namespace inventManagementApp
         }
         public void createbutton_Click(object sender, EventArgs e)
         {
+            
+            if (int.TryParse(textBoxQuantity.Text.Replace(",", ""), out int inputQuantity))
             {
-                if (int.TryParse(textBoxQuantity.Text.Replace(",", ""), out int inputQuantity))
-                {
-                    int checkedQuantity = CheckQuantityRange(inputQuantity);
-                    // チェック後の値をテキストボックスに反映
-                    textBoxQuantity.Text = checkedQuantity.ToString("N0");
-                }
-                else
-                {
-                    // 無効な入力の場合のエラー表示
-                    MessageBox.Show("有効な数値を入力してください(0~9999)");
-                    textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
-                    return;
-                }
-
-                // **空欄の場合の処理**
-                string commentText = string.IsNullOrWhiteSpace(commentbox.Text) ? "blank comment" : commentbox.Text;
-                int rowIndex = tableLayoutPanel.RowCount;
-
-                // 新しいリストアイテムを作成
-                var newItem = new ListItemControl(textBoxQuantity.Text, commentbox.Text, rowIndex);
-
-                // 削除イベントの設定
-                newItem.DeleteClicked += (s, args) =>
-                {
-                    tableLayoutPanel.Controls.Remove((Control)s);
-                    tableLayoutPanel.RowCount--;
-                    // **すべてのアイテムを上に詰める**
-                    RearrangeTableLayoutPanel();
-                    // スクロール領域を更新
-                    AdjustTableLayoutSize();
-                };
-
-
-                // TableLayoutPanel に追加
-                tableLayoutPanel.RowCount++; //色用のカウント
-                tableLayoutPanel.Controls.Add(newItem, 0, tableLayoutPanel.RowCount - 1);
-                tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F)); // 行の高さを40に設定
-
-                //色を設定
-                newItem.BackColor = GetColor();
-
-                // レイアウトを更新
-                tableLayoutPanel.PerformLayout();
-                tableLayoutPanel.Invalidate();
-
-                //パネルサイズの更新
-                AdjustTableLayoutSize();
-
-                // 最下部にスクロール
-                panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
+                int checkedQuantity = CheckQuantityRange(inputQuantity);
+                // チェック後の値をテキストボックスに反映
+                textBoxQuantity.Text = checkedQuantity.ToString("N0");
             }
+            else
+            {
+                // 無効な入力の場合のエラー表示
+                MessageBox.Show("有効な数値を入力してください(0~9999)");
+                textBoxQuantity.Text = minQuantity.ToString(); // 最小値を設定
+                return;
+            }
+
+            // **空欄の場合の処理**
+            string commentText = string.IsNullOrWhiteSpace(commentbox.Text) ? "blank comment" : commentbox.Text;
+            int rowIndex = tableLayoutPanel.RowCount;
+
+            // 新しいリストアイテムを作成
+            //int newId = DatabaseHelper.DatabaseHelper.GetNewId(); // **新しい ID を取得**
+            string record_day = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            var newItem = new ListItemControl(textBoxQuantity.Text, commentbox.Text, record_day , 0);
+
+            // TableLayoutPanel に追加
+            tableLayoutPanel.RowCount++; //色用のカウント
+            tableLayoutPanel.Controls.Add(newItem, 0, tableLayoutPanel.RowCount - 1);
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.AutoSize)); // **高さを自動調整**
+
+            // レイアウトを更新
+            tableLayoutPanel.PerformLayout();
+            tableLayoutPanel.Invalidate();
+
+            //パネルサイズの更新
+            AdjustTableLayoutSize();
+
+            // 最下部にスクロール
+            panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
+
         }
-        public Color GetColor()
+        public static Color GetColor(int rowCount)
         {
-            if (tableLayoutPanel.RowCount % 2 == 0)
+            if (rowCount % 2 == 0)
             {
                 return Color.LightGray;
             }
@@ -424,33 +414,60 @@ namespace inventManagementApp
                 return Color.White;
             }
         }
-        private void AdjustTableLayoutSize() //パネルサイズ拡張
+        private bool isUserScrolling = false;
+        private void AdjustTableLayoutSize()
         {
             if (tableLayoutPanel == null || panelcontain == null)
             {
                 MessageBox.Show("tableLayoutPanel または panelContainer が見つかりません。");
                 return;
             }
+            // **最初の行の RowStyle を AutoSize に設定**
+            if (tableLayoutPanel.RowStyles.Count > 0)
+            {
+                tableLayoutPanel.RowStyles[0] = new RowStyle(SizeType.AutoSize);
+            }
+            // **リストアイテムの高さを基に計算**
+            // **自動サイズ調整を有効化**
+            tableLayoutPanel.AutoSize = true;
+            tableLayoutPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            // **スクロール領域を適切に設定**
+            panelcontain.AutoScroll = false; // **一度無効化**
+            int calculatedHeight = tableLayoutPanel.PreferredSize.Height; // **200増やして確実にスクロール可能に**
+            panelcontain.AutoScrollMinSize = new Size(0, calculatedHeight);
+            panelcontain.AutoScroll = true; // **再度有効化**
 
-            // `TableLayoutPanel` の高さを行数に合わせて調整
-            tableLayoutPanel.Height = tableLayoutPanel.RowCount * 40 + 10;
+            // **Margin と Padding をゼロにする**
+            tableLayoutPanel.Margin = new Padding(0);
+            tableLayoutPanel.Padding = new Padding(0);
 
-            // `panelContainer` のスクロールを維持
-            panelcontain.AutoScroll = true;
-
-            // スクロール位置を最上部に戻す
-            // スクロール領域を適切に設定（TableLayoutPanelの高さ分）
-            panelcontain.AutoScrollMinSize = new Size(0, tableLayoutPanel.Height);
-
-            // レイアウトの更新
+            // **レイアウトを更新**
+            tableLayoutPanel.PerformLayout();
             panelcontain.PerformLayout();
             panelcontain.Update();
-
             panelcontain.Invalidate();
 
-            // **スクロールバーのハンドル位置を更新**
-            panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
+            // **手動スクロール中でなければ最下部にスクロール**
+            if (!isUserScrolling)
+            {
+                panelcontain.VerticalScroll.Value = panelcontain.VerticalScroll.Maximum;
+                panelcontain.AutoScrollPosition = new Point(0, panelcontain.VerticalScroll.Maximum);
+            }
         }
+        // **スクロールイベントを追加**
+        private void panelcontain_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (e.Type == ScrollEventType.ThumbTrack || e.Type == ScrollEventType.ThumbPosition)
+            {
+                isUserScrolling = true; // **手動スクロール中**
+            }
+            else
+            {
+                isUserScrolling = false; // **スクロールを手放したら通常の処理に戻る**
+            }
+        }
+
+
         private void RearrangeTableLayoutPanel()
         {
             if (tableLayoutPanel == null)
@@ -484,17 +501,33 @@ namespace inventManagementApp
 
         private void clearbutton_Click(object sender, EventArgs e)
         {
-            // すべてのコントロールを削除
-            tableLayoutPanel.Controls.Clear();
+            Form1 parentForm = this.FindForm() as Form1;
+            if (parentForm == null)
+            {
+                MessageBox.Show("親フォームが見つかりません");
+                return;
+            }
 
-            // 行数をリセット
-            tableLayoutPanel.RowCount = 0;
+            // **すべての ListItemControl を取得し、論理削除**
+            foreach (Control control in parentForm.tableLayoutPanel.Controls)
+            {
+                if (control is ListItemControl itemControl && itemControl.idnum != 0)
+                {
+                    DatabaseHelper.DatabaseHelper.SoftDeleteId(itemControl.idnum);
+                }
+            }
 
-            // レイアウトを更新
-            tableLayoutPanel.PerformLayout();
+            // **すべてのコントロールを削除**
+            parentForm.tableLayoutPanel.Controls.Clear();
 
-            // スクロール領域をリセット
-            AdjustTableLayoutSize();
+            // **行数をリセット**
+            parentForm.tableLayoutPanel.RowCount = 0;
+
+            // **レイアウトを更新**
+            parentForm.tableLayoutPanel.PerformLayout();
+
+            // **スクロール領域をリセット**
+            parentForm.AdjustTableLayoutSize();
         }
 
         private void combinedbutton_Click(object sender, EventArgs e)
@@ -535,17 +568,28 @@ namespace inventManagementApp
             private Button deleteButton;
             private Button detailButton;
             private int rowIndex;
-
+            public int idnum;
+            public int Id { get; private set; } // **データベースの ID を保持**
             public event EventHandler DeleteClicked; // 削除ボタンが押されたときのイベント
 
-            public ListItemControl(string Quantitytext, string commentText, int rowIndex)
+            public ListItemControl(string Quantitytext, string commentText, string record_day, int flag)
             {
                 // コントロールの初期化
                 this.Width = 400; // 幅を固定（必要に応じて変更）
                 this.Height = 40; // 高さを固定
-                //this.Margin = new Padding(5); // 間隔
                 this.BackColor = Color.White;
-                this.rowIndex = rowIndex;
+                this.Padding = new Padding(0);
+                if (flag == 0)
+                {
+                    // **新しいIDを取得し、データベースに追加**
+                    this.idnum = DatabaseHelper.DatabaseHelper.GetNewId();
+                    DatabaseHelper.DatabaseHelper.InsertNewItem(this.idnum, Quantitytext, commentText, record_day);
+                }
+                else
+                {
+                    // **フラグが0以外なら、その値をIDとして使用**
+                    this.idnum = flag;
+                }
 
                 FlowLayoutPanel layoutPanel = new FlowLayoutPanel
                 {
@@ -567,7 +611,7 @@ namespace inventManagementApp
 
                 timelabel = new Label
                 {
-                    Text = DateTime.Now.ToString("HH:mm:ss"),
+                    Text = record_day,
                     Font = new Font("Yu Gothic UI", 12F, GraphicsUnit.Pixel),
                     AutoSize = false,
                     TextAlign = ContentAlignment.MiddleLeft,
@@ -611,11 +655,11 @@ namespace inventManagementApp
                     Font = new Font("Yu Gothic UI", 12F, GraphicsUnit.Pixel),
                     Text = "詳細",
                     Width = 50,
-                    Height = 30
+                    Height = 30,
                 };
 
                 detailButton.Click += DetailButton_Click;
-                deleteButton.Click += (s, e) => DeleteClicked?.Invoke(this, EventArgs.Empty);
+                deleteButton.Click += DeleteButton_Click;
                 checkBox.CheckedChanged += CheckBox_CheckedChanged;
 
                 // FlowLayoutPanel に追加**
@@ -628,8 +672,10 @@ namespace inventManagementApp
 
                 // この UserControl に FlowLayoutPanel を追加**
                 this.Controls.Add(layoutPanel);
-            }
 
+                //色を設定
+                this.BackColor = GetColor(idnum);
+            }
             private void CheckBox_CheckedChanged(object sender, EventArgs e)
             {
                 if (checkBox.Checked)
@@ -638,7 +684,7 @@ namespace inventManagementApp
                 }
                 else
                 {
-                    if (rowIndex % 2 == 0) //生成時の参照からずらす
+                    if (idnum % 2 == 1) //生成時の参照からずらす
                     {
                         this.BackColor = Color.White;
                     }
@@ -651,20 +697,6 @@ namespace inventManagementApp
 
             private void DetailButton_Click(object sender, EventArgs e)
             {
-                Button clickedButton = sender as Button;
-                if (clickedButton == null) return;
-                int id = 1;
-
-                // ボタンの Tag に ID が設定されているか確認
-                if (clickedButton.Tag != null && int.TryParse(clickedButton.Tag.ToString(), out int tagId))
-                {
-                    id = tagId; // 既存の ID を使用
-                }
-                else
-                {
-                    id = DatabaseHelper.DatabaseHelper.GetNewId();  // 新しい ID を取得
-                    clickedButton.Tag = id;
-                }
                 Form1 parentForm = this.FindForm() as Form1;
                 if (parentForm == null)
                 {
@@ -672,7 +704,27 @@ namespace inventManagementApp
                     return;
                 }
 
-                Form2 detailForm = new Form2(parentForm, id); // ID を渡す
+                Button clickedButton = sender as Button;
+                if (clickedButton == null) return;
+
+                // **クリックされたボタンの親（ListItemControl）を取得**
+                ListItemControl itemControl = FindParentListItemControl(clickedButton);
+                if (itemControl == null)
+                {
+                    MessageBox.Show("エラー: アイテムが見つかりません。");
+                    return;
+                }
+
+                int idnum = itemControl.idnum; // **リストアイテムごとのIDを取得**
+
+                // **リストに保存されたIDを確認**
+                if (idnum == 0)
+                {
+                    MessageBox.Show("エラー: ID が未登録です。");
+                    return;
+                }
+
+                Form2 detailForm = new Form2(parentForm, idnum); // **ID を渡す**
                 detailForm.StartPosition = FormStartPosition.Manual; // 手動で位置を設定
                 detailForm.Location = parentForm.Location; // **Form1 の位置を適用**
                 detailForm.Size = parentForm.Size; // **Form1 のサイズを適用（必要なら）**
@@ -680,22 +732,58 @@ namespace inventManagementApp
                 detailForm.Show();
                 parentForm.Hide(); // Form1 を非表示
             }
+
+
+            // **削除イベント**
+            private void DeleteButton_Click(object sender, EventArgs e)
+            {
+                Form1 parentForm = this.FindForm() as Form1;
+                if (parentForm == null)
+                {
+                    MessageBox.Show("親フォームが見つかりません");
+                    return;
+                }
+                Button clickedButton = sender as Button;
+                if (clickedButton == null) return;
+                // **クリックされたボタンの親（ListItemControl）を取得**
+                ListItemControl itemControl = FindParentListItemControl(clickedButton);
+                if (itemControl == null)
+                {
+                    MessageBox.Show("エラー: アイテムが見つかりません。");
+                    return;
+                }
+                int idnum = itemControl.idnum;
+                // **リストに保存されたIDを確認**
+                if (idnum == 0)
+                {
+                    MessageBox.Show("エラー: ID が未登録です。");
+                    return;
+                }
+                int is_deleted_id = itemControl.idnum;
+                DatabaseHelper.DatabaseHelper.SoftDeleteId(idnum); // **ID をソフトデリート**
+                // **アイテムを削除**
+                parentForm.tableLayoutPanel.Controls.Remove(itemControl);
+                parentForm.tableLayoutPanel.RowCount--;
+                // **すべてのアイテムを上に詰める**
+                parentForm.RearrangeTableLayoutPanel();
+                parentForm.AdjustTableLayoutSize();
+            }
+            private ListItemControl FindParentListItemControl(Control control)
+            {
+                while (control != null && !(control is ListItemControl))
+                {
+                    control = control.Parent; // **親をたどる**
+                }
+                return control as ListItemControl; // **見つかったら返す**
+            }
+
+
+
             // **プロパティ: チェックされているか**
             public bool IsChecked => checkBox.Checked;
 
             // **プロパティ: 数量のテキスト**
             public string QuantityText => Quantitylabel.Text;
-        }
-        private void resetButton_Click(object sender, EventArgs e)
-        {
-            var result = MessageBox.Show("データベースを完全に初期化します。よろしいですか？",
-                                         "データベースリセット", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (result == DialogResult.Yes)
-            {
-                DatabaseHelper.DatabaseHelper.ResetDatabase();
-                MessageBox.Show("データベースを初期化しました。", "完了", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
         }
 
         #endregion
