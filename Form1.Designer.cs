@@ -697,6 +697,7 @@ namespace inventManagementApp
             }
 
         }
+        //
 
         #endregion
         private const int maxQuantity = 9999;
