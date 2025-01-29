@@ -500,35 +500,35 @@ namespace inventManagementApp
         }
 
         private void clearbutton_Click(object sender, EventArgs e)
+{
+    Form1 parentForm = this.FindForm() as Form1;
+    if (parentForm == null)
+    {
+        MessageBox.Show("親フォームが見つかりません");
+        return;
+    }
+
+    // **すべての ListItemControl を取得し、論理削除**
+    foreach (Control control in parentForm.tableLayoutPanel.Controls)
+    {
+        if (control is ListItemControl itemControl && itemControl.idnum != 0)
         {
-            Form1 parentForm = this.FindForm() as Form1;
-            if (parentForm == null)
-            {
-                MessageBox.Show("親フォームが見つかりません");
-                return;
-            }
-
-            // **すべての ListItemControl を取得し、論理削除**
-            foreach (Control control in parentForm.tableLayoutPanel.Controls)
-            {
-                if (control is ListItemControl itemControl && itemControl.idnum != 0)
-                {
-                    DatabaseHelper.DatabaseHelper.SoftDeleteId(itemControl.idnum);
-                }
-            }
-
-            // **すべてのコントロールを削除**
-            parentForm.tableLayoutPanel.Controls.Clear();
-
-            // **行数をリセット**
-            parentForm.tableLayoutPanel.RowCount = 0;
-
-            // **レイアウトを更新**
-            parentForm.tableLayoutPanel.PerformLayout();
-
-            // **スクロール領域をリセット**
-            parentForm.AdjustTableLayoutSize();
+            DatabaseHelper.DatabaseHelper.SoftDeleteId(itemControl.idnum);
         }
+    }
+
+    // **すべてのコントロールを削除**
+    parentForm.tableLayoutPanel.Controls.Clear();
+
+    // **行数をリセット**
+    parentForm.tableLayoutPanel.RowCount = 0;
+
+    // **レイアウトを更新**
+    parentForm.tableLayoutPanel.PerformLayout();
+
+    // **スクロール領域をリセット**
+    parentForm.AdjustTableLayoutSize();
+}
 
         private void combinedbutton_Click(object sender, EventArgs e)
         {

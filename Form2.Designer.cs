@@ -15,6 +15,10 @@ namespace inventManagementApp
             imageDeleteButton = new Button();
             pictureBox1 = new PictureBox();
             label1 = new Label();
+            time = new TextBox();
+            quantity = new TextBox();
+            comment = new TextBox();
+            reroad = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -32,7 +36,7 @@ namespace inventManagementApp
             // imageUploadButton
             // 
             imageUploadButton.BackColor = SystemColors.Window;
-            imageUploadButton.Location = new Point(0, 524);
+            imageUploadButton.Location = new Point(0, 459);
             imageUploadButton.Name = "imageUploadButton";
             imageUploadButton.Size = new Size(247, 84);
             imageUploadButton.TabIndex = 1;
@@ -42,7 +46,7 @@ namespace inventManagementApp
             // imageDeleteButton
             // 
             imageDeleteButton.BackColor = SystemColors.Window;
-            imageDeleteButton.Location = new Point(247, 524);
+            imageDeleteButton.Location = new Point(247, 459);
             imageDeleteButton.Name = "imageDeleteButton";
             imageDeleteButton.Size = new Size(253, 84);
             imageDeleteButton.TabIndex = 2;
@@ -53,26 +57,62 @@ namespace inventManagementApp
             // 
             pictureBox1.Location = new Point(0, 89);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(500, 429);
+            pictureBox1.Size = new Size(500, 364);
+            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
             pictureBox1.TabIndex = 3;
             pictureBox1.TabStop = false;
-            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
-
             // 
             // label1
             // 
             label1.BackColor = SystemColors.Desktop;
             label1.ForeColor = SystemColors.Window;
-            label1.Location = new Point(411, -5);
+            label1.Location = new Point(411, 89);
             label1.Name = "label1";
             label1.Size = new Size(89, 91);
             label1.TabIndex = 4;
             label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // time
+            // 
+            time.Font = new Font("Yu Gothic UI", 14F);
+            time.Location = new Point(12, 549);
+            time.Name = "time";
+            time.Size = new Size(146, 45);
+            time.TabIndex = 5;
+            // 
+            // quantity
+            // 
+            quantity.Font = new Font("Yu Gothic UI", 14F);
+            quantity.Location = new Point(164, 549);
+            quantity.Name = "quantity";
+            quantity.Size = new Size(130, 45);
+            quantity.TabIndex = 6;
+            // 
+            // comment
+            // 
+            comment.Font = new Font("Yu Gothic UI", 14F);
+            comment.Location = new Point(299, 549);
+            comment.Name = "comment";
+            comment.Size = new Size(189, 45);
+            comment.TabIndex = 7;
+            // 
+            // reroad
+            // 
+            reroad.Location = new Point(411, -5);
+            reroad.Name = "reroad";
+            reroad.Size = new Size(89, 88);
+            reroad.TabIndex = 8;
+            reroad.Text = "更新";
+            reroad.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             AutoScaleMode = AutoScaleMode.None;
             ClientSize = new Size(500, 606);
+            Controls.Add(reroad);
+            Controls.Add(comment);
+            Controls.Add(quantity);
+            Controls.Add(time);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             Controls.Add(imageUploadButton);
@@ -82,6 +122,13 @@ namespace inventManagementApp
             Text = "Detail Form";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
+
+        }
+
+        private void Form2reroad_Click(object sender, EventArgs e)
+        {
+            
         }
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
@@ -185,24 +232,24 @@ namespace inventManagementApp
             return null; // データがない場合は何も表示しない
         }
 
-    // 🔹 バイト配列を Image に変換
-    private Image ByteArrayToImage(byte[] byteArray)
-    {
-        using (MemoryStream ms = new MemoryStream(byteArray))
+        // 🔹 バイト配列を Image に変換
+        private Image ByteArrayToImage(byte[] byteArray)
         {
-            return Image.FromStream(ms);
+            using (MemoryStream ms = new MemoryStream(byteArray))
+            {
+                return Image.FromStream(ms);
+            }
         }
-    }
 
-    // 🔹 Image をバイト配列に変換
-    private byte[] ImageToByteArray(Image image)
-    {
-        using (MemoryStream ms = new MemoryStream())
+        // 🔹 Image をバイト配列に変換
+        private byte[] ImageToByteArray(Image image)
         {
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            return ms.ToArray();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                return ms.ToArray();
+            }
         }
-    }
 
         // 🔹 画像を読み込んで表示する//
         private void LoadImage(int id)
@@ -255,5 +302,9 @@ namespace inventManagementApp
         private PictureBox pictureBox1;
         private Label label1;
         private bool isBackButtonPressed = false;
+        private TextBox time;
+        private TextBox quantity;
+        private TextBox comment;
+        private Button reroad;
     }
 }

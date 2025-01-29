@@ -68,7 +68,6 @@ namespace DatabaseHelper
                             id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID（主キー）
                             image_data BLOB, -- 画像データ
                             is_deleted_id INTEGER DEFAULT 0, -- ID の論理削除フラグ（0: 未削除, 1: 削除済み）
-                            is_deleted_image INTEGER DEFAULT 0, -- image_data の論理削除フラグ（0: 未削除, 1: 削除済み）
                             record_day TEXT, -- 日付情報（予約語を避けるため `record_day` に変更）
                             comment TEXT, -- コメント
                             Quantity TEXT -- 数量（数値なら INTEGER にする方がよい）
