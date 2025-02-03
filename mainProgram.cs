@@ -23,6 +23,6 @@ namespace inventManagementApp
         [DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
 
-
+        //
     }
 }

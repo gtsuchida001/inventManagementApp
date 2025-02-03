@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using static inventManagementApp.Form1;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace DatabaseHelper
 {
@@ -150,6 +151,66 @@ namespace DatabaseHelper
                     }
                 }
             }
+        }
+
+        public static void UpdateRecord(int id, string time, string quantity, string comment)
+        {
+            if (id <= 0)
+            {
+                MessageBox.Show("エラー: ID が無効です。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+            {
+                connection.Open();
+                using (var command = new SQLiteCommand("UPDATE images SET record_day = @time, Quantity = @quantity,  comment = @comment WHERE id = @id", connection))
+                {
+                    command.Parameters.AddWithValue("@time", string.IsNullOrWhiteSpace(time) ? DBNull.Value : (object)time);
+                    command.Parameters.AddWithValue("@quantity", string.IsNullOrWhiteSpace(quantity) ? DBNull.Value : (object)quantity);
+                    command.Parameters.AddWithValue("@comment", string.IsNullOrWhiteSpace(comment) ? DBNull.Value : (object)comment);
+                    command.Parameters.AddWithValue("@id", id);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("データベースが更新されました。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("更新に失敗しました。IDが正しいか確認してください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+        public static (string time, string quantity, string comment) GetRecordById(int id)
+        {
+            using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+            {
+                connection.Open();
+                using (var command = new SQLiteCommand("SELECT record_day, Quantity, comment FROM images WHERE id = @id", connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (!reader.Read()) // **データがない場合のエラー処理**
+                        {
+                            MessageBox.Show("エラー: 該当するデータが見つかりません。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return (null, null, null);
+                        }
+
+                        // **カラム名を正しく修正 & `DBNull` を考慮**
+                        string time = reader["record_day"] != DBNull.Value ? reader["record_day"].ToString() : "";
+                        string quantity = reader["Quantity"] != DBNull.Value ? reader["Quantity"].ToString() : "";
+                        string comment = reader["comment"] != DBNull.Value ? reader["comment"].ToString() : "";
+
+                        return (time, quantity, comment);
+                    }
+                }
+
+                return (null, null, null); // データが見つからなかった場合
+            }
+
         }
     }
 }

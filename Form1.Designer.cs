@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using System.ComponentModel;
 using DatabaseHelper;
+using System.Data.SQLite;
 
 namespace inventManagementApp
 {
@@ -21,6 +22,8 @@ namespace inventManagementApp
         private System.ComponentModel.IContainer components = null;
         //public List<int> newIds = new List<int>(); // newId を保持するリスト
         public int newIds = 0; // **ID を保持するメンバ変数**
+        private string dbPath = "num_database.db"; // SQLite データベースのパス
+
 
         /// <summary>
         ///  Clean up any resources being used.
@@ -236,6 +239,37 @@ namespace inventManagementApp
             panelcontain.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
+        }
+
+        public void ReloadDataFromDatabase()
+        {
+
+            // **データをリセット**
+            tableLayoutPanel.Controls.Clear();
+            using (var connection = new SQLiteConnection($"Data Source=num_database.db;Version=3;"))
+            {
+                connection.Open();
+                using (var command = new SQLiteCommand("SELECT id, record_day, Quantity, comment FROM images WHERE is_deleted_id = 0", connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int id = reader.GetInt32(0);
+                            string time = reader["record_day"]?.ToString() ?? "";
+                            string quantity = reader["Quantity"]?.ToString() ?? "";
+                            string comment = reader["comment"]?.ToString() ?? "";
+
+                            // **新しい ListItemControl を作成して追加**
+                            ListItemControl item = new ListItemControl(quantity, comment, time, id);
+                            tableLayoutPanel.Controls.Add(item);
+                        }
+                    }
+                }
+            }
+
+            // **レイアウトを更新**
+            tableLayoutPanel.PerformLayout();
         }
 
         private void textboxCheck()
@@ -500,35 +534,35 @@ namespace inventManagementApp
         }
 
         private void clearbutton_Click(object sender, EventArgs e)
+{
+    Form1 parentForm = this.FindForm() as Form1;
+    if (parentForm == null)
+    {
+        MessageBox.Show("親フォームが見つかりません");
+        return;
+    }
+
+    // **すべての ListItemControl を取得し、論理削除**
+    foreach (Control control in parentForm.tableLayoutPanel.Controls)
+    {
+        if (control is ListItemControl itemControl && itemControl.idnum != 0)
         {
-            Form1 parentForm = this.FindForm() as Form1;
-            if (parentForm == null)
-            {
-                MessageBox.Show("親フォームが見つかりません");
-                return;
-            }
-
-            // **すべての ListItemControl を取得し、論理削除**
-            foreach (Control control in parentForm.tableLayoutPanel.Controls)
-            {
-                if (control is ListItemControl itemControl && itemControl.idnum != 0)
-                {
-                    DatabaseHelper.DatabaseHelper.SoftDeleteId(itemControl.idnum);
-                }
-            }
-
-            // **すべてのコントロールを削除**
-            parentForm.tableLayoutPanel.Controls.Clear();
-
-            // **行数をリセット**
-            parentForm.tableLayoutPanel.RowCount = 0;
-
-            // **レイアウトを更新**
-            parentForm.tableLayoutPanel.PerformLayout();
-
-            // **スクロール領域をリセット**
-            parentForm.AdjustTableLayoutSize();
+            DatabaseHelper.DatabaseHelper.SoftDeleteId(itemControl.idnum);
         }
+    }
+
+    // **すべてのコントロールを削除**
+    parentForm.tableLayoutPanel.Controls.Clear();
+
+    // **行数をリセット**
+    parentForm.tableLayoutPanel.RowCount = 0;
+
+    // **レイアウトを更新**
+    parentForm.tableLayoutPanel.PerformLayout();
+
+    // **スクロール領域をリセット**
+    parentForm.AdjustTableLayoutSize();
+}
 
         private void combinedbutton_Click(object sender, EventArgs e)
         {
@@ -777,13 +811,18 @@ namespace inventManagementApp
                 return control as ListItemControl; // **見つかったら返す**
             }
 
-
-
             // **プロパティ: チェックされているか**
             public bool IsChecked => checkBox.Checked;
 
             // **プロパティ: 数量のテキスト**
             public string QuantityText => Quantitylabel.Text;
+        }
+        
+
+
+        public TableLayoutPanel TableLayoutPanelRef
+        {
+            get { return tableLayoutPanel; }
         }
 
         #endregion
