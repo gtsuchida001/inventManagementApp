@@ -20,6 +20,7 @@ namespace inventManagementApp
             LoadListItemsFromDatabase();
 
             // タイトルバーは残しつつ、ウィンドウの枠を消す
+            //
             this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             this.ControlBox = true;  // 閉じるボタン（×）を有効化
             this.Text = "mainForm";  // タイトルバーのテキストを指定
